@@ -425,8 +425,15 @@ class Interface:
 
         # ----------------------------------------------------------------------
 
-        # ---------fig1-------------------------------------------------------------
+        # ---------fig0-------------------------------------------------------------
         # first picture after the blurring and turning to binary
+        plt.figure(0)
+        imshow(img_merged_lines)
+        plt.xticks([]), plt.yticks([])
+        plt.show()
+
+        # ---------fig1-------------------------------------------------------------
+
         plt.figure(1)
         # image = plt.imread(cbook.get_sample_data('prediction/merged_lines.jpg'))
         #
