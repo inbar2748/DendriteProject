@@ -21,7 +21,7 @@ import numpy
 import numpy as np
 import matplotlib.pyplot as plt
 import PyQt5
-from matplotlib import pyplot
+from matplotlib import pyplot, ticker
 from scipy.stats import binom
 import scipy
 import seaborn as sns
@@ -155,7 +155,7 @@ class Interface:
         if linesP is not None:
             for i in range(0, len(linesP)):
                 l = linesP[i][0]
-                cv.line(cdstP, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 3, cv.LINE_AA)
+                cv.line(cdstP, (l[0], l[1]), (l[2], l[3]), (255, 255, 0), 3, cv.LINE_AA)
 
         # __________________primitive pic_______________________________________
 
@@ -209,7 +209,7 @@ class Interface:
         id_ = 0
         RangeMap = dict()
         for line in merged_lines_all:
-            cv.line(img_merged_lines, (line[0][0], line[0][1]), (line[1][0], line[1][1]), (0, 0, 255), 3, cv.LINE_AA)
+            cv.line(img_merged_lines, (line[0][0], line[0][1]), (line[1][0], line[1][1]), (255, 255, 0), 3, cv.LINE_AA)
 
             # length of each line
             x0 = line[0][0]
@@ -325,31 +325,47 @@ class Interface:
                 parallel_histlist.append(len(value) + 1)
                 # print(parallel_histlist)
             values_ = histogram(parallel_histlist)
-            # print(values_)
 
-            # fig = plt.figure(figsize=(15, 8))
+            # -------------------fig2 ---------------------
             plt.figure(2)
             plt.subplot(2, 1, 1)
-            l = list(range(1, len(values_) + 1))
-            plt.bar(range(len(values_)),
+            plt.bar(range(2,len(values_)+2),
                     height=values_,
                     color="blue", width=0.35)
-            plt.xticks(range(len(values_)), l)
+            plt.xticks(range(2, 9))
+            plt.yticks(range(0, max(values_)))
             plt.xticks(fontsize=18, rotation=45)
             plt.yticks(fontsize=18)
-            plt.ylabel('frequency', fontsize=20)
+            plt.ylabel('frequency', fontsize=20,fontweight='bold')
             # plt.xlabel('parallel groups', fontsize=10)
             plt.title('Measured', fontsize=22)
+            ax = plt.gca()
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+            # plt.subplot(2, 1, 1)
+            # l = list(range(1, len(values_) + 1))
+            # plt.bar(range(len(values_)),
+            #         height=values_,
+            #         color="blue", width=0.35)
+            # plt.xticks(range(2,len(values_)+1), l)
+            # plt.xticks(fontsize=18, rotation=45)
+            # plt.yticks(fontsize=18)
+            # plt.ylabel('frequency', fontsize=20,fontweight='bold')
+            # # plt.xlabel('parallel groups', fontsize=10)
+            # plt.title('Measured', fontsize=22)
 
             plt.subplot(2, 1, 2)
 
             plt.bar(r_values[2:9],
                     height=dist[2:9],
                     color="blue", width=0.35)
+            plt.yticks(range(0, max(values_)))
+            ax = plt.gca()
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
             plt.xticks(fontsize=18, rotation=45)
-            plt.ylabel('frequency', fontsize=20)
+            plt.ylabel('frequency', fontsize=20,fontweight='bold')
             plt.yticks(fontsize=18)
-            plt.xlabel('parallel groups', fontsize=20)
+            plt.xlabel('parallel groups', fontsize=20,fontweight='bold')
             plt.title('Simulation', fontsize=22)
             plt.tight_layout()
 
@@ -494,7 +510,7 @@ class Interface:
         # ax.set(title="angles")
 
         for i, txt in enumerate(y1):
-            plt.annotate(txt, (x1[i], y1[i]))
+            plt.annotate(txt, (x1[i], y1[i]),fontsize=20)
 
         # tell matplotlib to use the format specified above
         ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(DendriteList))))
@@ -504,28 +520,29 @@ class Interface:
         ax.tick_params(axis='x', rotation=70)
         # plt.yticks([])
         plt.yticks(fontsize=18)
-        plt.ylabel('ID', fontsize=22)
+        plt.ylabel('ID', fontsize=22,fontweight='bold')
         plt.xticks([])
 
         # plt.title('figure 3- Range of angles:')
+
         plt.subplot(2, 1, 2)
-        plt.hist(x1, bins=int(len(DendriteList)), range=[0, 180], rwidth=1, color='b', edgecolor='black',
-                 lw=0)
+        plt.hist(x1, bins=int(len(DendriteList)), range=[0, 180], rwidth=1, color='b', edgecolor='black',lw=0)
         ax = plt.gca()
         ax.set_xlim(0, 180)
-        plt.yticks(range(1, 7))
+        # plt.yticks(range(1,5))
         plt.yticks(fontsize=18)
         plt.xticks(fontsize=18)
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(DendriteList))))
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
         ax.xaxis.set_minor_locator(MultipleLocator(int(180 / len(DendriteList))))
         ax.tick_params(axis='x', rotation=70)
         # ax.set(xlabel="x - Angles", ylabel="# of dendrite")
-        plt.xlabel('Angles [°]', fontsize=22)
+        plt.xlabel('Angles [°]', fontsize=22,fontweight='bold')
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u"{x:.0f}°"))
 
-        plt.ylabel('# of dendrite', fontsize=22)
+        plt.ylabel('# of dendrite', fontsize=22,fontweight='bold')
         plt.grid(True)
 
         plt.tight_layout()
@@ -575,10 +592,10 @@ class Interface:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
         ax.xaxis.set_minor_locator(MultipleLocator(180 / len(DendriteList)))
-        ax.tick_params(axis='x', rotation=80)
+        ax.tick_params(axis='x', rotation=45)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
         # plt.xlabel('Length', fontsize=18)
-        plt.ylabel('# of dendrites', fontsize=20)
+        plt.ylabel('# of dendrites', fontsize=20,fontweight='bold')
         ax.set_facecolor('#d8dcd6')
         # plt.suptitle('figure 2- Range of length:', fontsize=14, fontweight='bold')
         # plt.title('NOT parallel groups vs. parallel groups')
@@ -588,7 +605,7 @@ class Interface:
                                      "\nStandard Error of all 'NOT Parallels' lines: " +
                                      str("{:.1f}".format(
                                          float(stats.sem(error_listNp, axis=None, ddof=0)))) + u"\u03BCm",
-                                     loc=1, prop={"size": 22})
+                                     loc=1, prop={"size": 19})
         ax.add_artist(anchored_text)
         plt.grid(True)
 
@@ -601,9 +618,9 @@ class Interface:
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
         ax.xaxis.set_minor_locator(AutoMinorLocator())
-        ax.tick_params(axis='x', rotation=80)
-        plt.xlabel('Length [\u03BCm]', fontsize=20)
-        plt.ylabel('# of dendrites', fontsize=20)
+        ax.tick_params(axis='x', rotation=45)
+        plt.xlabel('Length [\u03BCm]', fontsize=20,fontweight='bold')
+        plt.ylabel('# of dendrites', fontsize=20,fontweight='bold')
         plt.yticks(fontsize=18)
         plt.xticks(fontsize=18)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
@@ -614,7 +631,7 @@ class Interface:
                                      "\nStandard Error of all Parallels lines: " +
                                      str("{:.1f}".format(
                                          float(stats.sem(error_listp, axis=None, ddof=0)))) + u"\u03BCm",
-                                     loc=1, prop={"size": 22})
+                                     loc=1, prop={"size": 19})
         ax.add_artist(anchored_text)
 
         plt.grid(True)
