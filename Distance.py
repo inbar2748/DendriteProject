@@ -103,7 +103,7 @@ class DistanceBL:
                     dot = magA
                 pA = a0 + (_A * dot)
 
-        return round(np.linalg.norm(pA-pB),2)
+        return round(np.linalg.norm(pA-pB) * 0.167 ,2)
 
 
 if __name__ == "__main__":

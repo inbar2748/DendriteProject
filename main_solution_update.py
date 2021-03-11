@@ -308,17 +308,21 @@ class Interface:
             # obtaining the mean and variance
             mean, var = binom.stats(n, p)
             # list of pmf values
-            dist = [(binom.pmf(k, n, p)) * n for k in r_values]
+            # dist = [(binom.pmf(k, n, p)) * n for k in r_values]
+            dist =[]
+            for k in r_values:
+                ans= (binom.pmf(k, n, p)) * n
+                if float(ans) > 0.05:
+                    dist.append(ans)
             # printing the table
             print('\n', "<--------------- Binomial distribution simulation: --------------->", '\n')
-
+            print(len(dist))
             print("k\tp(k)")
-            simulation_histlist = []
-            for index_ in range(2, 9):
-                print(str(r_values[index_]) + "\t" + "{:.3f}".format(float(dist[index_])))
-                # printing mean and variance
-            print("mean = " + str(mean))
-            print("variance = " + str(var))
+            # for index_ in r_values:
+            #     print(str(r_values[index_]) + "\t" + "{:.2f}".format(float(dist[index_])))
+            #     # printing mean and variance
+            # print("mean = " + str(mean))
+            # print("variance = " + str(var))
 
             parallel_histlist = []
             for key, value in ModifyRangeMap.items():
@@ -332,7 +336,6 @@ class Interface:
             plt.bar(range(2,len(values_)+2),
                     height=values_,
                     color="blue", width=0.35)
-            plt.xticks(range(2, 9))
             plt.yticks(range(0, max(values_)))
             plt.xticks(fontsize=18, rotation=45)
             plt.yticks(fontsize=18)
@@ -356,8 +359,8 @@ class Interface:
 
             plt.subplot(2, 1, 2)
 
-            plt.bar(r_values[2:9],
-                    height=dist[2:9],
+            plt.bar(r_values[2:len(dist)],
+                    height=dist[2:len(dist)],
                     color="blue", width=0.35)
             plt.yticks(range(0, max(values_)))
             ax = plt.gca()
@@ -387,7 +390,7 @@ class Interface:
             DistanceComputed.update({key.id: shortlist})
 
         print('\n', "<--------------- The shortest distance between Parallel groups: --------------->", '\n')
-        print('ID:   Shortest length values [\u03BCm]:')
+        print('ID:   distance to parallel [\u03BCm]:')
 
         final_final_data = []
 
@@ -403,7 +406,7 @@ class Interface:
                    "max angle range [\xb0]": d_data["max angle range [\xb0]"],
                    "number of parallel lines": d_data["number of parallel lines"],
                    "parallel lines id": d_data["parallel lines id"],
-                   "shortest lengths [\u03BCm]": ' , '.join(map(str, value))}
+                   "distance to parallel [\u03BCm]": ' , '.join(map(str, value))}
 
             final_final_data.append(res)
             print('{0}: {1} \n'.format(key, value))
@@ -414,7 +417,7 @@ class Interface:
                      ["dendrite id", "length [\u03BCm]", "vector1", "vector2", "angle [\xb0]",
                       "min angle range [\xb0]", "max angle range [\xb0]",
                       "number of parallel lines", "parallel lines id",
-                      "shortest lengths [\u03BCm]"],
+                      "distance to parallel [\u03BCm]"],
                      "data_information", "data")
 
         # ----------------average of all the parallels lines:------------------
@@ -579,13 +582,17 @@ class Interface:
         x2.sort()
         x3.sort()
 
+        if x2[len(x2) - 1] > x3[len(x3) - 1]:
+            x_range=x2[len(x2) - 1]
+        else: x_range= x3[len(x3) - 1]
+
         plt.figure(4)
         plt.subplot(2, 1, 1)
         plt.hist(x3, bins=int(len(DendriteList)), range=[0, x3[len(x3) - 1]], rwidth=1, color='blue',
                  edgecolor='black', lw=1)
         ax = plt.gca()
         ax.set_ylim(0, len(x3))
-        ax.set_xlim(0, x3[len(x3) - 1])
+        ax.set_xlim(0, x_range)
         plt.yticks(fontsize=18)
         plt.xticks(fontsize=18)
         ax.xaxis.set_major_locator(MultipleLocator(180 / len(DendriteList)))
@@ -613,7 +620,7 @@ class Interface:
         plt.hist(x2, bins=int(len(DendriteList)), range=[0, x2[len(x2) - 1]], rwidth=1, color='blue',
                  edgecolor='black', lw=1)
         ax = plt.gca()
-        ax.set_xlim(0, x2[len(x2) - 1])
+        ax.set_xlim(0, x_range)
         ax.xaxis.set_major_locator(MultipleLocator(180 / len(DendriteList)))
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
