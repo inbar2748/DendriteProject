@@ -1,5 +1,3 @@
-
-
 #
 #  Copyright (c) 2019  INBAR DAHARI.
 #  All rights reserved.
@@ -9,13 +7,15 @@ import PyQt5
 from PyQt5 import uic
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5 import QtCore
+from PyQt5 import QtGui, QtCore
 from PyQt5 import QtWidgets
 import sys
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog
 
 from main_solution_update import Interface
+
+
 
 
 class GUI(QtWidgets.QMainWindow):
@@ -25,13 +25,15 @@ class GUI(QtWidgets.QMainWindow):
         self.ui = uic.loadUi("mainwindow.ui", self)
         self.ui.uploadFile.clicked.connect(self.upload_file)
         self.ui.NextButton.clicked.connect(self.Next_Button)
-        self.ui.threshold1_slider.valueChanged.connect(self.on_slider_value_changed)
+        self.ui.threshold1_slider_2.valueChanged.connect(self.on_slider_value_changed)
         self.ui.min_distance.valueChanged.connect(self.on_min_distance_changed)
         self.ui.min_angel.valueChanged.connect(self.on_min_angel_changed)
         self.ui.btn_ok.clicked.connect(self.on_ok_clicked)
 
         self.interface = Interface()
         self.ui.tabWidget.setCurrentIndex(0)
+
+
 
     def upload_file(self):
         f_name = QFileDialog.getOpenFileName(self, "Open Png File", "", "Files (*.png)")[0]
@@ -48,7 +50,7 @@ class GUI(QtWidgets.QMainWindow):
     def on_slider_value_changed(self, value):
         print("Slider changed", value)
         self.interface.p_threshold1 = value
-    
+
     def on_min_distance_changed(self, value):
         print("Min distance", value)
         self.interface.min_distance_to_merge = value
