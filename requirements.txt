@@ -1,0 +1,9 @@
+matplotlib
+matplotlib-scalebar
+opencv-python
+scipy
+numpy
+PyQt5
+seaborn
+pillow
+xlsxwriter

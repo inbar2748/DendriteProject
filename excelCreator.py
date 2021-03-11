@@ -9,7 +9,7 @@ from xlsxwriter import Workbook
 # or leave it blank, default name is "Sheet 1"
 
 def create_excel(data, headers, file_name, sheet_name):
-    wb = Workbook(f"{file_name}.xlsx")
+    wb = Workbook(file_name)
     ws = wb.add_worksheet(sheet_name)
 
     first_row = 0

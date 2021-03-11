@@ -167,7 +167,7 @@
         <string>threshold1:</string>
        </property>
       </widget>
-      <widget class="QSlider" name="horizontalSlider">
+      <widget class="QSlider" name="threshold1_slider">
        <property name="geometry">
         <rect>
          <x>180</x>
@@ -238,7 +238,7 @@
         <string>min angle to merge:</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="spinBox">
+      <widget class="QSpinBox" name="min_distance">
        <property name="geometry">
         <rect>
          <x>150</x>
@@ -248,7 +248,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QSpinBox" name="spinBox_2">
+      <widget class="QSpinBox" name="min_angel">
        <property name="geometry">
         <rect>
          <x>150</x>
@@ -259,7 +259,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QPushButton" name="OkButton_2">
+     <widget class="QPushButton" name="btn_ok">
       <property name="geometry">
        <rect>
         <x>240</x>

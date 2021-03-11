@@ -99,17 +99,23 @@ class Range:
 
 class Interface:
 
+    def __init__(self):
+        super(Interface, self).__init__()
+        self.p_file_path = None
+        self.p_threshold1 = None
+        self.min_distance_to_merge = None
+        self.min_angle_to_merge = None
+        self.excel_file = None
+
     def get_lines(self, lines_in):
         if cv.__version__ < '3.0':
             return lines_in[0]
         return [l[0] for l in lines_in]
 
-    def main(self, argv):
-
+    def main(self):
         default_file = 'den.png'
-        filename = argv[0] if len(argv) > 0 else default_file
-        # Loads an image
-        p_file_path = 'C:/Users/inbar/Desktop/Parallel 8a dendrites 12 DIV X40 (1).png'
+        p_file_path = self.p_file_path if self.p_file_path else 'Parallel 8a dendrites 12 DIV X40 (1).png'
+
         src = cv.imread(p_file_path, cv.COLOR_BGR2HLS)
 
         # Check if image is loaded fine
@@ -121,11 +127,11 @@ class Interface:
         """img = cv.imread('_.png')
         imgplot = plt.imshow(img)
         plt.show(imgplot)
-"""
+        """
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
-        p_threshold1 = 125
-        dst = cv.Canny(blur, 50, p_threshold1, None, 3)  # threshold1= 200- 110- as the num is low- the lines are more
+        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 125
+        dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)  # threshold1= 200- 110- as the num is low- the lines are more
         # detect
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
         # threshold1 – first threshold for the hysteresis procedure
@@ -418,7 +424,7 @@ class Interface:
                       "min angle range [\xb0]", "max angle range [\xb0]",
                       "number of parallel lines", "parallel lines id",
                       "distance to parallel [\u03BCm]"],
-                     "data_information", "data")
+                    self.excel_file, "data")
 
         # ----------------average of all the parallels lines:------------------
 
@@ -653,8 +659,8 @@ class Interface:
     def merge_lines_pipeline_2(self, lines):
         super_lines_final = []
         super_lines = []
-        min_distance_to_merge = 20  # 30
-        min_angle_to_merge = 10  # 30
+        min_distance_to_merge = self.min_distance_to_merge if self.min_distance_to_merge != None else 20
+        min_angle_to_merge = self.min_angle_to_merge if self.min_angle_to_merge != None else 10
 
         for line in lines:
             create_new_group = True
