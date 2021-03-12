@@ -2,15 +2,10 @@
 #  Copyright (c) 2019  INBAR DAHARI.
 #  All rights reserved.
 #
-
-import PyQt5
 from PyQt5 import uic
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5 import QtGui, QtCore
+from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 import sys
-from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog
 
 from main_solution_update import Interface

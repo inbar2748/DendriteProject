@@ -10,30 +10,15 @@
 #  All rights reserved.
 #
 
-import collections
-import json
-import sys
-import math
-from typing import List
-import matplotlib.pyplot as plt
-import matplotlib.cbook as cbook
 from matplotlib.offsetbox import AnchoredText
 from matplotlib_scalebar.scalebar import ScaleBar
 import cv2 as cv
 from scipy import stats
-import numpy
-import numpy as np
-import matplotlib.pyplot as plt
-import PyQt5
-from matplotlib import pyplot, ticker
 from scipy.stats import binom
-import scipy
 import seaborn as sns
-import matplotlib.cm as cm
-from PIL import Image
 from pylab import *
 from Distance import DistanceBL
-from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FormatStrFormatter, StrMethodFormatter
+from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FormatStrFormatter
 from excelCreator import *
 
 
@@ -118,7 +103,8 @@ class Interface:
 
     def main(self):
         default_file = 'den.png'
-        p_file_path = self.p_file_path if self.p_file_path else 'Parallel 8a dendrites 12 DIV X40 (1).png'
+        p_file_path = self.p_file_path
+        # p_file_path = self.p_file_path if self.p_file_path else 'Parallel 8a dendrites 12 DIV X40 (1).png'
 
         src = cv.imread(p_file_path, cv.COLOR_BGR2HLS)
 
@@ -134,7 +120,7 @@ class Interface:
         """
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
-        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 125
+        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
         dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)  # threshold1= 200- 110- as the num is low- the lines are more
         # detect
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
@@ -457,16 +443,19 @@ class Interface:
         # ---------fig0-------------------------------------------------------------
         # first picture after the blurring and turning to binary
         plt.figure(0)
+        scalebar = ScaleBar(0.167, 'um')
+        plt.gca().add_artist(scalebar)
         imshow(img_merged_lines)
         plt.xticks([]), plt.yticks([])
         plt.show()
+
 
         # ---------fig1-------------------------------------------------------------
 
         plt.figure(1)
         # image = plt.imread(cbook.get_sample_data('prediction/merged_lines.jpg'))
         #
-        plt.subplot(131), plt.imshow(src)
+        plt.subplot(131), plt.imshow(dst)
         # indicates that each pixel is equal to 0.167 micrometer.
         scalebar = ScaleBar(0.167, 'um')
         plt.gca().add_artist(scalebar)
@@ -481,13 +470,6 @@ class Interface:
         plt.tight_layout()
 
         plt.show()
-
-        # cv.imwrite('prediction/merged_lines.jpg', img_merged_lines)
-        # plt.subplot(121), imshow(src)
-        # plt.xticks([]), plt.yticks([])
-        # plt.subplot(122), imshow(img_merged_lines)
-        # plt.xticks([]), plt.yticks([])
-        # plt.show()
 
         # ---------fig2-------binomial_distribution of random grows:------------------
 
