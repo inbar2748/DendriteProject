@@ -126,6 +126,14 @@ class Interface:
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
         # threshold1 – first threshold for the hysteresis procedure
 
+        # -----------binary image
+        # gray()
+        # figure(0)
+        # scalebar = ScaleBar(0.167, 'um')
+        # plt.gca().add_artist(scalebar)
+        # imshow(dst)
+        # plt.xticks([]), plt.yticks([])
+        # plt.show()
         # __________________primitive pic_______________________________________
         # Copy edges to the images that will display the results in BGR
 
@@ -327,45 +335,46 @@ class Interface:
             values_ = histogram(parallel_histlist)
 
             # -------------------fig2 ---------------------
+
+            if max(values_) > max(dist[2:len(dist)]):
+                y_group_range = max(values_)
+            else:
+                y_group_range = max(dist[2:len(dist)])
+
             plt.figure(2)
-            plt.subplot(2, 1, 1)
+            plt.subplot(1, 2, 1)
             plt.bar(range(2,len(values_)+2),
                     height=values_,
                     color="blue", width=0.35)
-            plt.yticks(range(0, max(values_)))
-            plt.xticks(fontsize=18, rotation=45)
-            plt.yticks(fontsize=18)
-            plt.ylabel('frequency', fontsize=20,fontweight='bold')
+            # plt.yticks(range(0, max(values_)))
+            plt.ylim([0, y_group_range])
+            # plt.yticks(np.arange(0, max(values_),step=2))
+            plt.xticks(fontsize=20, rotation=45)
+            plt.yticks(fontsize=20)
+            plt.ylabel('frequency', fontsize=25,fontweight='bold')
             # plt.xlabel('parallel groups', fontsize=10)
-            plt.title('Measured', fontsize=22)
+            plt.xlabel('parallel groups', fontsize=25,fontweight='bold')
+            plt.title('Measured', fontsize=26)
             ax = plt.gca()
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            plt.tight_layout()
 
-            # plt.subplot(2, 1, 1)
-            # l = list(range(1, len(values_) + 1))
-            # plt.bar(range(len(values_)),
-            #         height=values_,
-            #         color="blue", width=0.35)
-            # plt.xticks(range(2,len(values_)+1), l)
-            # plt.xticks(fontsize=18, rotation=45)
-            # plt.yticks(fontsize=18)
-            # plt.ylabel('frequency', fontsize=20,fontweight='bold')
-            # # plt.xlabel('parallel groups', fontsize=10)
-            # plt.title('Measured', fontsize=22)
 
-            plt.subplot(2, 1, 2)
+            plt.subplot(1, 2, 2)
 
             plt.bar(r_values[2:len(dist)],
                     height=dist[2:len(dist)],
                     color="blue", width=0.35)
-            plt.yticks(range(0, max(values_)))
+            plt.ylim([0, y_group_range])
+            # plt.yticks(np.arange(0, max(values_), step=2))
+            plt.xticks(fontsize=20, rotation=45)
+            plt.yticks(fontsize=20)
+            plt.ylabel('frequency', fontsize=25,fontweight='bold')
+            plt.xlabel('parallel groups', fontsize=25,fontweight='bold')
+            plt.title('Simulation', fontsize=26)
+            # plt.yticks(range(0, max(values_)))
             ax = plt.gca()
             ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-            plt.xticks(fontsize=18, rotation=45)
-            plt.ylabel('frequency', fontsize=20,fontweight='bold')
-            plt.yticks(fontsize=18)
-            plt.xlabel('parallel groups', fontsize=20,fontweight='bold')
-            plt.title('Simulation', fontsize=22)
             plt.tight_layout()
 
             plt.show()
@@ -442,6 +451,7 @@ class Interface:
 
         # ---------fig0-------------------------------------------------------------
         # first picture after the blurring and turning to binary
+
         plt.figure(0)
         scalebar = ScaleBar(0.167, 'um')
         plt.gca().add_artist(scalebar)
@@ -455,7 +465,8 @@ class Interface:
         plt.figure(1)
         # image = plt.imread(cbook.get_sample_data('prediction/merged_lines.jpg'))
         #
-        plt.subplot(131), plt.imshow(dst)
+        gray()
+        plt.subplot(131), plt.imshow(blur)
         # indicates that each pixel is equal to 0.167 micrometer.
         scalebar = ScaleBar(0.167, 'um')
         plt.gca().add_artist(scalebar)
@@ -505,7 +516,7 @@ class Interface:
         # ax.set(title="angles")
 
         for i, txt in enumerate(y1):
-            plt.annotate(txt, (x1[i], y1[i]),fontsize=20)
+            plt.annotate(txt, (x1[i], y1[i]),fontsize=25)
 
         # tell matplotlib to use the format specified above
         ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(DendriteList))))
@@ -514,8 +525,8 @@ class Interface:
         ax.xaxis.set_minor_locator(MultipleLocator(int(180 / len(DendriteList))))
         ax.tick_params(axis='x', rotation=70)
         # plt.yticks([])
-        plt.yticks(fontsize=18)
-        plt.ylabel('ID', fontsize=22,fontweight='bold')
+        plt.yticks(fontsize=20)
+        plt.ylabel('ID', fontsize=25,fontweight='bold')
         plt.xticks([])
 
         # plt.title('figure 3- Range of angles:')
@@ -525,8 +536,8 @@ class Interface:
         ax = plt.gca()
         ax.set_xlim(0, 180)
         # plt.yticks(range(1,5))
-        plt.yticks(fontsize=18)
-        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=20)
+        plt.xticks(fontsize=20)
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
         ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(DendriteList))))
         ax.yaxis.set_minor_locator(AutoMinorLocator())
@@ -534,10 +545,10 @@ class Interface:
         ax.xaxis.set_minor_locator(MultipleLocator(int(180 / len(DendriteList))))
         ax.tick_params(axis='x', rotation=70)
         # ax.set(xlabel="x - Angles", ylabel="# of dendrite")
-        plt.xlabel('Angles [°]', fontsize=22,fontweight='bold')
+        plt.xlabel('Angles [°]', fontsize=25,fontweight='bold')
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u"{x:.0f}°"))
 
-        plt.ylabel('# of dendrite', fontsize=22,fontweight='bold')
+        plt.ylabel('# of dendrite', fontsize=25,fontweight='bold')
         plt.grid(True)
 
         plt.tight_layout()
@@ -585,8 +596,8 @@ class Interface:
         ax = plt.gca()
         ax.set_ylim(0, len(x3))
         ax.set_xlim(0, x_range)
-        plt.yticks(fontsize=18)
-        plt.xticks(fontsize=18)
+        plt.yticks(fontsize=20)
+        plt.xticks(fontsize=20)
         ax.xaxis.set_major_locator(MultipleLocator(180 / len(DendriteList)))
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
@@ -594,7 +605,7 @@ class Interface:
         ax.tick_params(axis='x', rotation=45)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
         # plt.xlabel('Length', fontsize=18)
-        plt.ylabel('# of dendrites', fontsize=20,fontweight='bold')
+        plt.ylabel('# of dendrites', fontsize=25,fontweight='bold')
         ax.set_facecolor('#d8dcd6')
         # plt.suptitle('figure 2- Range of length:', fontsize=14, fontweight='bold')
         # plt.title('NOT parallel groups vs. parallel groups')
@@ -618,10 +629,10 @@ class Interface:
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.tick_params(axis='x', rotation=45)
-        plt.xlabel('Length [\u03BCm]', fontsize=20,fontweight='bold')
-        plt.ylabel('# of dendrites', fontsize=20,fontweight='bold')
-        plt.yticks(fontsize=18)
-        plt.xticks(fontsize=18)
+        plt.xlabel('Length [\u03BCm]', fontsize=25,fontweight='bold')
+        plt.ylabel('# of dendrites', fontsize=25,fontweight='bold')
+        plt.yticks(fontsize=20)
+        plt.xticks(fontsize=20)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
         ax.set_facecolor('#d8dcd6')
         avg2 = (average(ModifyRangeMap))
