@@ -9,6 +9,7 @@
 #  Copyright (c) 2019  INBAR DAHARI.
 #  All rights reserved.
 #
+import math
 
 from matplotlib.offsetbox import AnchoredText
 from matplotlib_scalebar.scalebar import ScaleBar
@@ -120,7 +121,7 @@ class Interface:
         """
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
-        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
+        #p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
         dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)  # threshold1= 200- 110- as the num is low- the lines are more
         # detect
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
@@ -806,6 +807,18 @@ class Interface:
         dist4 = self.DistancePointLine(line2[1][0], line2[1][1], line1[0][0], line1[0][1], line1[1][0], line1[1][1])
 
         return min(dist1, dist2, dist3, dist4)
+
+    def create_preview(self):
+        # ---------fig0-------------------------------------------------------------
+        # first picture after the blurring and turning to binary
+
+        plt.figure(0)
+        scalebar = ScaleBar(0.167, 'um')
+        plt.gca().add_artist(scalebar)
+        imshow(img_merged_lines)
+        plt.xticks([]), plt.yticks([])
+        plt.show()
+
 
     # The scipy.stats module contains various functions for statistical calculations and tests.
     # probability mass function(pmf), which is the total probability of achieving r success and n-r failure.

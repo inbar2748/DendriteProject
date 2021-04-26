@@ -24,6 +24,7 @@ class GUI(QtWidgets.QMainWindow):
         self.ui.min_distance.valueChanged.connect(self.on_min_distance_changed)
         self.ui.min_angel.valueChanged.connect(self.on_min_angel_changed)
         self.ui.btn_ok.clicked.connect(self.on_ok_clicked)
+        self.ui.btn_create_preview.clicked.connect(self.on_preview_clicked)
 
         self.interface = Interface()
         self.ui.tabWidget.setCurrentIndex(0)
@@ -63,8 +64,9 @@ class GUI(QtWidgets.QMainWindow):
         print("Saving excel file to", f_name)
         self.interface.main()
 
-    #def on_preview_clicked(self):
-     #   self.interface.create_preview()
+    def on_preview_clicked(self):
+        print("preview clicked")
+        self.interface.create_preview()
 
 
 
