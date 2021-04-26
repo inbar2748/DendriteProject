@@ -96,6 +96,7 @@ class Interface:
         self.min_distance_to_merge = None
         self.min_angle_to_merge = None
         self.excel_file = None
+        self.preview_figure = None
 
     def get_lines(self, lines_in):
         if cv.__version__ < '3.0':
@@ -103,6 +104,7 @@ class Interface:
         return [l[0] for l in lines_in]
 
     def main(self):
+        plt.close('all')
         default_file = 'den.png'
         p_file_path = self.p_file_path
         # p_file_path = self.p_file_path if self.p_file_path else 'Parallel 8a dendrites 12 DIV X40 (1).png'
@@ -121,7 +123,7 @@ class Interface:
         """
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
-        #p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
+        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
         dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)  # threshold1= 200- 110- as the num is low- the lines are more
         # detect
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
@@ -162,90 +164,13 @@ class Interface:
                 l = linesP[i][0]
                 cv.line(cdstP, (l[0], l[1]), (l[2], l[3]), (255, 255, 0), 3, cv.LINE_AA)
 
-        # __________________primitive pic_______________________________________
+        # __________________regular pic_______________________________________
 
-        cdst = cv.cvtColor(dst, cv.COLOR_GRAY2BGR)  # turn to binary img
-        """
-            with the arguments:
-            dst: Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
-            lines: A vector that will store the parameters ( x start ,y start,x end,y end) of the detected lines
-            rho : The resolution of the parameter k in pixels. We use 1 pixel.
-            theta: The resolution of the parameter θ in radians. We use 1 degree (CV_PI/180)
-            threshold: The minimum number of intersections to "*detect*" a line
-            minLinLength: The minimum number of points that can form a line. Lines with less than this number of points are disregarded.
-            maxLineGap: The maximum gap between two points to be considered in the same line.
-            """
-        lines = cv.HoughLinesP(dst, 1, np.pi / 180, 50, None, 50, 10)
-        # It gives as output the extremes of the detected lines (x0,y0,x1,y1)
-
-        # prepare
-        _lines = []
-        for _line in self.get_lines(lines):
-            _lines.append([(_line[0], _line[1]), (_line[2], _line[3])])
-
-        # sort
-        _lines_x = []
-        _lines_y = []
-        for line_i in _lines:
-            orientation_i = math.atan2((line_i[0][1] - line_i[1][1]), (line_i[0][0] - line_i[1][0]))
-            if (abs(math.degrees(orientation_i)) > 45) and abs(math.degrees(orientation_i)) < (90 + 45):
-                # if ((orientation_i)*(180*math.pi) > 45) and ((orientation_i)*(180*math.pi)< (90 + 45)):
-                _lines_y.append(line_i)
-            else:
-                _lines_x.append(line_i)
-        # sort the lines by the beginning  point- x and y
-        _lines_x = sorted(_lines_x, key=lambda _line: _line[0][0])
-        _lines_y = sorted(_lines_y, key=lambda _line: _line[0][1])
-
-        merged_lines_x = self.merge_lines_pipeline_2(_lines_x)
-        merged_lines_y = self.merge_lines_pipeline_2(_lines_y)
-
-        # list of all the final merged lines
-        merged_lines_all = []
-        merged_lines_all.extend(merged_lines_x)
-        merged_lines_all.extend(merged_lines_y)
-        # print("process groups lines", len(_lines)," -->", len(merged_lines_all), '\n')
-
-
-        print("The number of lines identified in the image: ", len(merged_lines_all), '\n')
-        img_merged_lines = cdst
-
-        DendriteList = []
-        id_ = 0
-        RangeMap = dict()
-        for line in merged_lines_all:
-            cv.line(img_merged_lines, (line[0][0], line[0][1]), (line[1][0], line[1][1]), (255, 255, 0), 3, cv.LINE_AA)
-
-            # length of each line
-            x0 = line[0][0]
-            x1 = line[1][0]
-            y0 = line[0][1]
-            y1 = line[1][1]
-            dist = math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
-            # print('The length : ', dist)
-
-            # finding the angle between start point and end point of line
-            v1 = Vector(x0, y0)  # coordinate of the lines
-            v2 = Vector(x1, y1)
-
-            # the coordinate of the marks lines- Each line is represented by four numbers, which are the two
-            # endpoints of the detected line segment print(merged_lines_all[line]) Vector.tuple(v1) Vector.tuple(v2)
-            # _______________ __________________________________________
-            radians = math.atan2((line[0][1] - line[1][1]), (line[0][0] - line[1][0]))  # in radians
-            turn_degrees = math.degrees(radians)
-
-            # print(orientation_i)
-            # orientation_i = math.atan2((line[0][1] - line[1][1]), (line[0][0] - line[1][0]))
-
-            # in Radians(180 / math.pi) or in degrees(180 * math.pi)
-
-            # print('angle:', radians, '\n')
-            id_ = id_ + 1
-            DendriteList.append(Dendrite(id_, dist, v1, v2, turn_degrees % 180))  # %360
+        (DendriteList, img_merged_lines) = self.get_detected_picture(dst)
 
         print("information for each dendrite: ")
         DendriteList.sort()
-
+        RangeMap = dict()
         x = (180 / len(DendriteList))  # angle to group
         for dendrite in DendriteList:
             min_angle = dendrite.angle - x
@@ -303,82 +228,6 @@ class Interface:
                                  "max angle range [\xb0]": d_max,
                                  "number of parallel lines": par_count,
                                  "parallel lines id": par_id})
-
-        def binomial_distribution():
-            # setting the values of n and p
-            # defining the list of k values
-            n = len(DendriteList)
-            p = 1 / n
-            r_values = list(range(n + 1))
-            # obtaining the mean and variance
-            mean, var = binom.stats(n, p)
-            # list of pmf values
-            # dist = [(binom.pmf(k, n, p)) * n for k in r_values]
-            dist =[]
-            for k in r_values:
-                ans= (binom.pmf(k, n, p)) * n
-                if float(ans) > 0.05:
-                    dist.append(ans)
-            # printing the table
-            print('\n', "<--------------- Binomial distribution simulation: --------------->", '\n')
-            print(len(dist))
-            print("k\tp(k)")
-            # for index_ in r_values:
-            #     print(str(r_values[index_]) + "\t" + "{:.2f}".format(float(dist[index_])))
-            #     # printing mean and variance
-            # print("mean = " + str(mean))
-            # print("variance = " + str(var))
-
-            parallel_histlist = []
-            for key, value in ModifyRangeMap.items():
-                parallel_histlist.append(len(value) + 1)
-                # print(parallel_histlist)
-            values_ = histogram(parallel_histlist)
-
-            # -------------------fig2 ---------------------
-
-            if max(values_) > max(dist[2:len(dist)]):
-                y_group_range = max(values_)
-            else:
-                y_group_range = max(dist[2:len(dist)])
-
-            plt.figure(2)
-            plt.subplot(1, 2, 1)
-            plt.bar(range(2,len(values_)+2),
-                    height=values_,
-                    color="blue", width=0.35)
-            # plt.yticks(range(0, max(values_)))
-            plt.ylim([0, y_group_range])
-            # plt.yticks(np.arange(0, max(values_),step=2))
-            plt.xticks(fontsize=20, rotation=45)
-            plt.yticks(fontsize=20)
-            plt.ylabel('frequency', fontsize=25,fontweight='bold')
-            # plt.xlabel('parallel groups', fontsize=10)
-            plt.xlabel('parallel groups', fontsize=25,fontweight='bold')
-            plt.title('Measured', fontsize=26)
-            ax = plt.gca()
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-            plt.tight_layout()
-
-
-            plt.subplot(1, 2, 2)
-
-            plt.bar(r_values[2:len(dist)],
-                    height=dist[2:len(dist)],
-                    color="blue", width=0.35)
-            plt.ylim([0, y_group_range])
-            # plt.yticks(np.arange(0, max(values_), step=2))
-            plt.xticks(fontsize=20, rotation=45)
-            plt.yticks(fontsize=20)
-            plt.ylabel('frequency', fontsize=25,fontweight='bold')
-            plt.xlabel('parallel groups', fontsize=25,fontweight='bold')
-            plt.title('Simulation', fontsize=26)
-            # plt.yticks(range(0, max(values_)))
-            ax = plt.gca()
-            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-            plt.tight_layout()
-
-            plt.show()
 
         # ----------------short distance between lines------------------
 
@@ -453,17 +302,9 @@ class Interface:
         # ---------fig0-------------------------------------------------------------
         # first picture after the blurring and turning to binary
 
-        plt.figure(0)
-        scalebar = ScaleBar(0.167, 'um')
-        plt.gca().add_artist(scalebar)
-        imshow(img_merged_lines)
-        plt.xticks([]), plt.yticks([])
-        plt.show()
-
-
         # ---------fig1-------------------------------------------------------------
 
-        plt.figure(1)
+        plt.figure("Segmentation line workflow")
         # image = plt.imread(cbook.get_sample_data('prediction/merged_lines.jpg'))
         #
         gray()
@@ -485,7 +326,7 @@ class Interface:
 
         # ---------fig2-------binomial_distribution of random grows:------------------
 
-        binomial_distribution()
+        self.binomial_distribution(DendriteList, ModifyRangeMap)
 
         # ------------fig3 -angles scatter plot of dendrites------
         x1 = [0] * (len(DendriteList))
@@ -506,7 +347,7 @@ class Interface:
         # Get the color for each sample.
         colors = cm.rainbow(np.linspace(0, 1, len(x1)))
 
-        plt.figure(3)
+        plt.figure("Angular distribution of dendritic branches")
         # plot the data
 
         ax = plt.subplot(2, 1, 1)
@@ -590,7 +431,7 @@ class Interface:
             x_range=x2[len(x2) - 1]
         else: x_range= x3[len(x3) - 1]
 
-        plt.figure(4)
+        plt.figure("Length distribution of parallel vs. non-parallel dendritic branches")
         plt.subplot(2, 1, 1)
         plt.hist(x3, bins=int(len(DendriteList)), range=[0, x3[len(x3) - 1]], rwidth=1, color='blue',
                  edgecolor='black', lw=1)
@@ -652,8 +493,83 @@ class Interface:
 
         # ------------------
 
-        return merged_lines_all
+        #return merged_lines_all
 
+    def binomial_distribution(self, DendriteList, ModifyRangeMap):
+        # setting the values of n and p
+        # defining the list of k values
+        n = len(DendriteList)
+        p = 1 / n
+        r_values = list(range(n + 1))
+        # obtaining the mean and variance
+        mean, var = binom.stats(n, p)
+        # list of pmf values
+        # dist = [(binom.pmf(k, n, p)) * n for k in r_values]
+        dist =[]
+        for k in r_values:
+            ans= (binom.pmf(k, n, p)) * n
+            if float(ans) > 0.05:
+                dist.append(ans)
+        # printing the table
+        print('\n', "<--------------- Binomial distribution simulation: --------------->", '\n')
+        print(len(dist))
+        print("k\tp(k)")
+        # for index_ in r_values:
+        #     print(str(r_values[index_]) + "\t" + "{:.2f}".format(float(dist[index_])))
+        #     # printing mean and variance
+        # print("mean = " + str(mean))
+        # print("variance = " + str(var))
+
+        parallel_histlist = []
+        for key, value in ModifyRangeMap.items():
+            parallel_histlist.append(len(value) + 1)
+            # print(parallel_histlist)
+        values_ = histogram(parallel_histlist)
+
+        # -------------------fig2 ---------------------
+
+        if max(values_) > max(dist[2:len(dist)]):
+            y_group_range = max(values_)
+        else:
+            y_group_range = max(dist[2:len(dist)])
+
+        plt.figure("Classification of dendritic branch parallel growth vs random simulation")
+        plt.subplot(1, 2, 1)
+        plt.bar(range(2,len(values_)+2),
+                height=values_,
+                color="blue", width=0.35)
+        # plt.yticks(range(0, max(values_)))
+        plt.ylim([0, y_group_range])
+        # plt.yticks(np.arange(0, max(values_),step=2))
+        plt.xticks(fontsize=20, rotation=45)
+        plt.yticks(fontsize=20)
+        plt.ylabel('frequency', fontsize=25,fontweight='bold')
+        # plt.xlabel('parallel groups', fontsize=10)
+        plt.xlabel('parallel groups', fontsize=25,fontweight='bold')
+        plt.title('Measured', fontsize=26)
+        ax = plt.gca()
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        plt.tight_layout()
+
+
+        plt.subplot(1, 2, 2)
+
+        plt.bar(r_values[2:len(dist)],
+                height=dist[2:len(dist)],
+                color="blue", width=0.35)
+        plt.ylim([0, y_group_range])
+        # plt.yticks(np.arange(0, max(values_), step=2))
+        plt.xticks(fontsize=20, rotation=45)
+        plt.yticks(fontsize=20)
+        plt.ylabel('frequency', fontsize=25,fontweight='bold')
+        plt.xlabel('parallel groups', fontsize=25,fontweight='bold')
+        plt.title('Simulation', fontsize=26)
+        # plt.yticks(range(0, max(values_)))
+        ax = plt.gca()
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+        plt.tight_layout()
+
+        plt.show()
     def merge_lines_pipeline_2(self, lines):
         super_lines_final = []
         super_lines = []
@@ -808,11 +724,102 @@ class Interface:
 
         return min(dist1, dist2, dist3, dist4)
 
+    def get_detected_picture(self, dst):
+        cdst = cv.cvtColor(dst, cv.COLOR_GRAY2BGR)  # turn to binary img
+        """
+            with the arguments:
+            dst: Output of the edge detector. It should be a grayscale image (although in fact it is a binary one)
+            lines: A vector that will store the parameters ( x start ,y start,x end,y end) of the detected lines
+            rho : The resolution of the parameter k in pixels. We use 1 pixel.
+            theta: The resolution of the parameter θ in radians. We use 1 degree (CV_PI/180)
+            threshold: The minimum number of intersections to "*detect*" a line
+            minLinLength: The minimum number of points that can form a line. Lines with less than this number of points are disregarded.
+            maxLineGap: The maximum gap between two points to be considered in the same line.
+            """
+        lines = cv.HoughLinesP(dst, 1, np.pi / 180, 50, None, 50, 10)
+        # It gives as output the extremes of the detected lines (x0,y0,x1,y1)
+
+        # prepare
+        _lines = []
+        for _line in self.get_lines(lines):
+            _lines.append([(_line[0], _line[1]), (_line[2], _line[3])])
+
+        # sort
+        _lines_x = []
+        _lines_y = []
+        for line_i in _lines:
+            orientation_i = math.atan2((line_i[0][1] - line_i[1][1]), (line_i[0][0] - line_i[1][0]))
+            if (abs(math.degrees(orientation_i)) > 45) and abs(math.degrees(orientation_i)) < (90 + 45):
+                # if ((orientation_i)*(180*math.pi) > 45) and ((orientation_i)*(180*math.pi)< (90 + 45)):
+                _lines_y.append(line_i)
+            else:
+                _lines_x.append(line_i)
+        # sort the lines by the beginning  point- x and y
+        _lines_x = sorted(_lines_x, key=lambda _line: _line[0][0])
+        _lines_y = sorted(_lines_y, key=lambda _line: _line[0][1])
+
+        merged_lines_x = self.merge_lines_pipeline_2(_lines_x)
+        merged_lines_y = self.merge_lines_pipeline_2(_lines_y)
+
+        # list of all the final merged lines
+        merged_lines_all = []
+        merged_lines_all.extend(merged_lines_x)
+        merged_lines_all.extend(merged_lines_y)
+        # print("process groups lines", len(_lines)," -->", len(merged_lines_all), '\n')
+
+        print("The number of lines identified in the image: ", len(merged_lines_all), '\n')
+        img_merged_lines = cdst
+
+        DendriteList = []
+        id_ = 0
+        for line in merged_lines_all:
+            cv.line(img_merged_lines, (line[0][0], line[0][1]), (line[1][0], line[1][1]), (255, 255, 0), 3, cv.LINE_AA)
+
+            # length of each line
+            x0 = line[0][0]
+            x1 = line[1][0]
+            y0 = line[0][1]
+            y1 = line[1][1]
+            dist = math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
+            # print('The length : ', dist)
+
+            # finding the angle between start point and end point of line
+            v1 = Vector(x0, y0)  # coordinate of the lines
+            v2 = Vector(x1, y1)
+
+            # the coordinate of the marks lines- Each line is represented by four numbers, which are the two
+            # endpoints of the detected line segment print(merged_lines_all[line]) Vector.tuple(v1) Vector.tuple(v2)
+            # _______________ __________________________________________
+            radians = math.atan2((line[0][1] - line[1][1]), (line[0][0] - line[1][0]))  # in radians
+            turn_degrees = math.degrees(radians)
+
+            # print(orientation_i)
+            # orientation_i = math.atan2((line[0][1] - line[1][1]), (line[0][0] - line[1][0]))
+
+            # in Radians(180 / math.pi) or in degrees(180 * math.pi)
+
+            # print('angle:', radians, '\n')
+            id_ = id_ + 1
+            DendriteList.append(Dendrite(id_, dist, v1, v2, turn_degrees % 180))  # %360
+        return (DendriteList, img_merged_lines)
+
+
     def create_preview(self):
+        if self.preview_figure != None:
+            plt.close(self.preview_figure)
         # ---------fig0-------------------------------------------------------------
         # first picture after the blurring and turning to binary
-
-        plt.figure(0)
+        default_file = 'den.png'
+        src = cv.imread(self.p_file_path, cv.COLOR_BGR2HLS)
+        if src is None:
+            print('Error opening image!')
+            print('Usage: hough_lines.py [' + default_file + '] \n')
+            return -1
+        blur = cv.GaussianBlur(src, (5, 5), 0)
+        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
+        dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)
+        (DendriteList, img_merged_lines) = self.get_detected_picture(dst)
+        self.preview_figure = plt.figure("Preview segmentation line detection")
         scalebar = ScaleBar(0.167, 'um')
         plt.gca().add_artist(scalebar)
         imshow(img_merged_lines)
