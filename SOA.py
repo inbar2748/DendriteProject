@@ -63,6 +63,11 @@ class GUI(QtWidgets.QMainWindow):
         print("Saving excel file to", f_name)
         self.interface.main()
 
+    #def on_preview_clicked(self):
+     #   self.interface.create_preview()
+
+
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

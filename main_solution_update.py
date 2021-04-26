@@ -548,7 +548,7 @@ class Interface:
         plt.xlabel('Angles [°]', fontsize=25,fontweight='bold')
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u"{x:.0f}°"))
 
-        plt.ylabel('# of dendrite', fontsize=25,fontweight='bold')
+        plt.ylabel('# of dendritic branches', fontsize=25,fontweight='bold')
         plt.grid(True)
 
         plt.tight_layout()
@@ -605,7 +605,7 @@ class Interface:
         ax.tick_params(axis='x', rotation=45)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
         # plt.xlabel('Length', fontsize=18)
-        plt.ylabel('# of dendrites', fontsize=25,fontweight='bold')
+        plt.ylabel('# of dendritic branches', fontsize=25,fontweight='bold')
         ax.set_facecolor('#d8dcd6')
         # plt.suptitle('figure 2- Range of length:', fontsize=14, fontweight='bold')
         # plt.title('NOT parallel groups vs. parallel groups')
@@ -630,7 +630,7 @@ class Interface:
         ax.xaxis.set_minor_locator(AutoMinorLocator())
         ax.tick_params(axis='x', rotation=45)
         plt.xlabel('Length [\u03BCm]', fontsize=25,fontweight='bold')
-        plt.ylabel('# of dendrites', fontsize=25,fontweight='bold')
+        plt.ylabel('# of dendritic branches', fontsize=25,fontweight='bold')
         plt.yticks(fontsize=20)
         plt.xticks(fontsize=20)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
