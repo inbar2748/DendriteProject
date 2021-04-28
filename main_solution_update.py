@@ -278,6 +278,8 @@ class Interface:
         # ----------------average of all the parallels lines:------------------
 
         def average(l):
+            if len(l)==0:
+                return 0
             sumLength = 0
             for key_, value_ in l.items():
                 sumLength = sumLength + key_.length
@@ -291,11 +293,21 @@ class Interface:
             error_listp.append(key_.length)
         for key_, value_ in NotParallelMap.items():
             error_listNp.append(key_.length)
+        if len(error_listp) == 0:
+            error_listp.append(0)
+        if len(error_listNp) == 0:
+            error_listNp.append(0)
+
+        def standard_error(group):
+            if len(group) == 0:
+                return ("Empty Result, No standard error found")
+            return round(stats.sem(group, axis=None, ddof=0), 2)
+
 
         print('\nAverage of all the parallels lines:', (average(ModifyRangeMap)))
-        print('Standard Error of all the parallels lines:', round(stats.sem(error_listp, axis=None, ddof=0), 2))
+        print('Standard Error of all the parallels lines:', standard_error(error_listp))
         print('\nAverage of all the NOT parallels lines:', (average(NotParallelMap)))
-        print('Standard Error of all the NOT parallels lines:', round(stats.sem(error_listNp, axis=None, ddof=0), 2))
+        print('Standard Error of all the NOT parallels lines:', standard_error(error_listNp))
 
         # ----------------------------------------------------------------------
 
@@ -426,10 +438,13 @@ class Interface:
 
         x2.sort()
         x3.sort()
-
-        if x2[len(x2) - 1] > x3[len(x3) - 1]:
-            x_range=x2[len(x2) - 1]
-        else: x_range= x3[len(x3) - 1]
+        if len(x2) == 0 :
+            x2.append(0)
+        if len(x3) == 0:
+            x3.append(0)
+        if x2[len(x2) - 1] > x3[len(x3) - 1] :
+            x_range = x2[len(x2) - 1]
+        else: x_range = x3[len(x3) - 1]
 
         plt.figure("Length distribution of parallel vs. non-parallel dendritic branches")
         plt.subplot(2, 1, 1)
@@ -460,6 +475,8 @@ class Interface:
                                      loc=1, prop={"size": 19})
         ax.add_artist(anchored_text)
         plt.grid(True)
+        plt.tight_layout()
+
 
         plt.subplot(2, 1, 2)
         plt.hist(x2, bins=int(len(DendriteList)), range=[0, x2[len(x2) - 1]], rwidth=1, color='blue',
@@ -485,8 +502,8 @@ class Interface:
                                          float(stats.sem(error_listp, axis=None, ddof=0)))) + u"\u03BCm",
                                      loc=1, prop={"size": 19})
         ax.add_artist(anchored_text)
-
         plt.grid(True)
+
         plt.tight_layout()
         plt.show()
         # ------------------
