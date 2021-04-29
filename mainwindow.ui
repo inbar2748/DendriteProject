@@ -181,10 +181,10 @@
        </property>
        <widget class="QSpinBox" name="threshold1_slider_2">
         <property name="minimum">
-         <number>110</number>
+         <number>0</number>
         </property>
         <property name="maximum">
-         <number>200</number>
+         <number>255</number>
         </property>
        </widget>
       </widget>

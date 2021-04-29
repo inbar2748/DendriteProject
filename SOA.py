@@ -52,7 +52,7 @@ class GUI(QtWidgets.QMainWindow):
         self.interface.min_distance_to_merge = value
 
     def on_min_angel_changed(self, value):
-        print("Min angel", value)
+        print("Min angele", value)
         self.interface.min_angle_to_merge = value
 
     def on_ok_clicked(self):
