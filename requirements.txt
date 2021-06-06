@@ -1,9 +1,18 @@
-matplotlib
-matplotlib-scalebar
-opencv-python
-scipy
-numpy
-PyQt5
-seaborn
-pillow
-xlsxwriter
+Windows:
+download the SOA.zip extract and run SOA.exe
+
+
+In order to run SOA (Linux, Mac), install the packages below:
+clone the repository
+
+pip install matplotlib
+pip install matplotlib-scalebar
+pip install opencv-python
+pip install scipy
+pip install numpy
+pip install PyQt5
+pip install seaborn
+pip install pillow
+pip install xlsxwriter
+
+python ./SOA.py

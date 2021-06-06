@@ -166,7 +166,7 @@ class Interface:
 
         # __________________regular pic_______________________________________
 
-        (DendriteList, img_merged_lines) = self.get_detected_picture(dst)
+        (DendriteList, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
 
         print("information for each dendrite: ")
         DendriteList.sort()
@@ -782,7 +782,7 @@ class Interface:
         merged_lines_all = []
         merged_lines_all.extend(merged_lines_x)
         merged_lines_all.extend(merged_lines_y)
-        # print("process groups lines", len(_lines)," -->", len(merged_lines_all), '\n')
+        print("process groups lines", len(_lines)," -->", len(merged_lines_all), '\n')
 
         print("The number of lines identified in the image: ", len(merged_lines_all), '\n')
         img_merged_lines = cdst
@@ -818,7 +818,8 @@ class Interface:
             # print('angle:', radians, '\n')
             id_ = id_ + 1
             DendriteList.append(Dendrite(id_, dist, v1, v2, turn_degrees % 180))  # %360
-        return (DendriteList, img_merged_lines)
+        return (DendriteList, img_merged_lines, _lines ,merged_lines_all )
+
 
 
     def create_preview(self):
@@ -835,10 +836,16 @@ class Interface:
         blur = cv.GaussianBlur(src, (5, 5), 0)
         p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
         dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)
-        (DendriteList, img_merged_lines) = self.get_detected_picture(dst)
+        (DendriteList, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
         self.preview_figure = plt.figure("Preview segmentation line detection")
+        ax = plt.gca()
         scalebar = ScaleBar(0.167, 'um')
-        plt.gca().add_artist(scalebar)
+        ax.add_artist(scalebar)
+
+        textstr = "Identified lines: {} \nIdentified lines after merging : {} ".format(len(_lines), len(merged_lines_all))
+        props = dict(facecolor='blue', alpha=0.2)
+        ax.set_xlabel(textstr,bbox=props,fontsize=20)
+
         imshow(img_merged_lines)
         plt.xticks([]), plt.yticks([])
         plt.show()
