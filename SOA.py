@@ -32,7 +32,7 @@ class GUI(QtWidgets.QMainWindow):
 
 
     def upload_file(self):
-        f_name = QFileDialog.getOpenFileName(self, "Open Png File", "", "Files (*.png)")[0]
+        f_name = QFileDialog.getOpenFileName(self, "Open Image File", "", "Files (*.png *.jpg *.tif *.bmp)")[0]
         if not f_name:
             return
         self.ui.UploadFileName.setText(f_name)
