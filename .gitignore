@@ -3,3 +3,5 @@ build/
 dist/
 venv/
 Gui.spec
+SOA.spec
+data_information.xlsx

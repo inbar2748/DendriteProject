@@ -831,7 +831,6 @@ class Interface:
         src = cv.imread(self.p_file_path, cv.COLOR_BGR2HLS)
         if src is None:
             print('Error opening image!')
-            print('Usage: hough_lines.py [' + default_file + '] \n')
             return -1
         blur = cv.GaussianBlur(src, (5, 5), 0)
         p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110

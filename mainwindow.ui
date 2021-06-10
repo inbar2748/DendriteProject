@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>689</width>
-    <height>610</height>
+    <width>996</width>
+    <height>820</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,14 +20,14 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>0</y>
-      <width>661</width>
-      <height>561</height>
+      <width>961</width>
+      <height>791</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
       <horstretch>30</horstretch>
       <verstretch>30</verstretch>
      </sizepolicy>
@@ -45,9 +45,15 @@
      <bool>false</bool>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <attribute name="title">
       <string>Upload</string>
      </attribute>
@@ -55,22 +61,37 @@
       <property name="geometry">
        <rect>
         <x>17</x>
-        <y>60</y>
-        <width>131</width>
-        <height>31</height>
+        <y>240</y>
+        <width>271</width>
+        <height>41</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
       </property>
       <property name="text">
        <string>Choose File</string>
+      </property>
+      <property name="autoRaise">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QFrame" name="previewPhoto">
       <property name="geometry">
        <rect>
-        <x>100</x>
-        <y>100</y>
-        <width>401</width>
-        <height>351</height>
+        <x>20</x>
+        <y>310</y>
+        <width>911</width>
+        <height>271</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -86,50 +107,109 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>160</x>
-        <y>62</y>
-        <width>471</width>
-        <height>31</height>
+        <x>300</x>
+        <y>240</y>
+        <width>631</width>
+        <height>41</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
      </widget>
      <widget class="QPushButton" name="NextButton">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>460</y>
+        <x>400</x>
+        <y>630</y>
         <width>144</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
       <property name="text">
        <string>Next</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>631</width>
-        <height>31</height>
+        <x>20</x>
+        <y>20</y>
+        <width>881</width>
+        <height>71</height>
        </rect>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>631</width>
-        <height>16777215</height>
-       </size>
       </property>
       <property name="font">
        <font>
-        <pointsize>10</pointsize>
+        <family>Mongolian Baiti</family>
+        <pointsize>24</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+        <underline>false</underline>
+        <strikeout>false</strikeout>
+        <kerning>false</kerning>
+       </font>
+      </property>
+      <property name="text">
+       <string>SOA</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>130</y>
+        <width>841</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string>Automatic identification of dendritic trees' morphological parameters</string>
+       <string>morphological parameters</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>90</y>
+        <width>861</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Automatic identification of dendritic trees' </string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </widget>
@@ -143,8 +223,14 @@
         <x>10</x>
         <y>10</y>
         <width>411</width>
-        <height>91</height>
+        <height>141</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
       <property name="title">
        <string>Edges</string>
@@ -153,10 +239,16 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>19</y>
+         <y>40</y>
          <width>141</width>
          <height>33</height>
         </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
        <property name="font">
         <font>
@@ -164,22 +256,28 @@
         </font>
        </property>
        <property name="text">
-        <string>Threshold 1:</string>
+        <string>Threshold :</string>
        </property>
       </widget>
       <widget class="QSplitter" name="splitter">
        <property name="geometry">
         <rect>
-         <x>120</x>
-         <y>20</y>
-         <width>281</width>
-         <height>32</height>
+         <x>290</x>
+         <y>40</y>
+         <width>101</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <widget class="QSpinBox" name="threshold1_slider_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimum">
          <number>0</number>
         </property>
@@ -194,8 +292,8 @@
        <rect>
         <x>430</x>
         <y>10</y>
-        <width>221</width>
-        <height>91</height>
+        <width>511</width>
+        <height>141</height>
        </rect>
       </property>
       <property name="title">
@@ -205,8 +303,8 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>19</y>
-         <width>281</width>
+         <y>39</y>
+         <width>311</width>
          <height>33</height>
         </rect>
        </property>
@@ -216,15 +314,15 @@
         </font>
        </property>
        <property name="text">
-        <string>Min distance to merge:</string>
+        <string>Min distance to merge :</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_8">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>49</y>
-         <width>281</width>
+         <y>89</y>
+         <width>321</width>
          <height>33</height>
         </rect>
        </property>
@@ -234,15 +332,15 @@
         </font>
        </property>
        <property name="text">
-        <string>Min angle to merge:</string>
+        <string>Min angle to merge :</string>
        </property>
       </widget>
       <widget class="QSpinBox" name="min_distance">
        <property name="geometry">
         <rect>
-         <x>150</x>
-         <y>20</y>
-         <width>61</width>
+         <x>410</x>
+         <y>40</y>
+         <width>81</width>
          <height>31</height>
         </rect>
        </property>
@@ -256,9 +354,9 @@
       <widget class="QSpinBox" name="min_angel">
        <property name="geometry">
         <rect>
-         <x>150</x>
-         <y>50</y>
-         <width>61</width>
+         <x>410</x>
+         <y>90</y>
+         <width>81</width>
          <height>31</height>
         </rect>
        </property>
@@ -273,8 +371,8 @@
      <widget class="QPushButton" name="btn_ok">
       <property name="geometry">
        <rect>
-        <x>240</x>
-        <y>470</y>
+        <x>400</x>
+        <y>630</y>
         <width>144</width>
         <height>41</height>
        </rect>
@@ -287,9 +385,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>110</y>
-        <width>641</width>
-        <height>351</height>
+        <y>170</y>
+        <width>941</width>
+        <height>371</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -301,14 +399,23 @@
       <widget class="QPushButton" name="btn_create_preview">
        <property name="geometry">
         <rect>
-         <x>180</x>
-         <y>40</y>
-         <width>251</width>
+         <x>220</x>
+         <y>150</y>
+         <width>481</width>
          <height>51</height>
         </rect>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Create Preview Segmentation Image</string>
+       </property>
+       <property name="autoExclusive">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>
