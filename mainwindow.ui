@@ -166,29 +166,6 @@
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
-      <property name="geometry">
-       <rect>
-        <x>40</x>
-        <y>130</y>
-        <width>841</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>morphological parameters</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_4">
       <property name="geometry">
        <rect>
@@ -206,7 +183,7 @@
        </font>
       </property>
       <property name="text">
-       <string>Automatic identification of dendritic trees' </string>
+       <string>Segmentation and Orientation Analysis</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
