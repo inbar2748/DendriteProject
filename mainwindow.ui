@@ -38,6 +38,11 @@
       <height>30</height>
      </size>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="mouseTracking">
      <bool>false</bool>
     </property>
@@ -45,7 +50,7 @@
      <bool>false</bool>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <property name="sizePolicy">
@@ -77,6 +82,11 @@
         <width>0</width>
         <height>0</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
       </property>
       <property name="text">
        <string>Choose File</string>
@@ -135,6 +145,11 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>Next</string>
       </property>
@@ -143,7 +158,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>20</y>
+        <y>40</y>
         <width>881</width>
         <height>71</height>
        </rect>
@@ -151,7 +166,7 @@
       <property name="font">
        <font>
         <family>Mongolian Baiti</family>
-        <pointsize>24</pointsize>
+        <pointsize>27</pointsize>
         <weight>75</weight>
         <bold>true</bold>
         <underline>false</underline>
@@ -170,14 +185,14 @@
       <property name="geometry">
        <rect>
         <x>40</x>
-        <y>90</y>
+        <y>120</y>
         <width>861</width>
         <height>51</height>
        </rect>
       </property>
       <property name="font">
        <font>
-        <pointsize>9</pointsize>
+        <pointsize>12</pointsize>
         <weight>75</weight>
         <bold>true</bold>
        </font>
@@ -200,7 +215,7 @@
         <x>10</x>
         <y>10</y>
         <width>411</width>
-        <height>141</height>
+        <height>201</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -209,6 +224,11 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
       <property name="title">
        <string>Edges</string>
       </property>
@@ -216,9 +236,9 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>40</y>
-         <width>141</width>
-         <height>33</height>
+         <y>52</y>
+         <width>261</width>
+         <height>51</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -229,7 +249,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>8</pointsize>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="text">
@@ -240,9 +260,9 @@
        <property name="geometry">
         <rect>
          <x>290</x>
-         <y>40</y>
+         <y>50</y>
          <width>101</width>
-         <height>31</height>
+         <height>41</height>
         </rect>
        </property>
        <property name="orientation">
@@ -254,6 +274,11 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
         </property>
         <property name="minimum">
          <number>0</number>
@@ -270,8 +295,15 @@
         <x>430</x>
         <y>10</y>
         <width>511</width>
-        <height>141</height>
+        <height>201</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
+       </font>
       </property>
       <property name="title">
        <string>Merge Lines</string>
@@ -280,14 +312,14 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>39</y>
-         <width>311</width>
-         <height>33</height>
+         <y>49</y>
+         <width>381</width>
+         <height>51</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>8</pointsize>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="text">
@@ -298,14 +330,14 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>89</y>
+         <y>122</y>
          <width>321</width>
-         <height>33</height>
+         <height>51</height>
         </rect>
        </property>
        <property name="font">
         <font>
-         <pointsize>8</pointsize>
+         <pointsize>10</pointsize>
         </font>
        </property>
        <property name="text">
@@ -316,10 +348,15 @@
        <property name="geometry">
         <rect>
          <x>410</x>
-         <y>40</y>
+         <y>50</y>
          <width>81</width>
-         <height>31</height>
+         <height>41</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
        </property>
        <property name="maximum">
         <number>30</number>
@@ -332,10 +369,15 @@
        <property name="geometry">
         <rect>
          <x>410</x>
-         <y>90</y>
+         <y>131</y>
          <width>81</width>
-         <height>31</height>
+         <height>41</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
        </property>
        <property name="maximum">
         <number>30</number>
@@ -362,10 +404,15 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>170</y>
+        <y>230</y>
         <width>941</width>
-        <height>371</height>
+        <height>311</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -376,9 +423,9 @@
       <widget class="QPushButton" name="btn_create_preview">
        <property name="geometry">
         <rect>
-         <x>220</x>
+         <x>160</x>
          <y>150</y>
-         <width>481</width>
+         <width>621</width>
          <height>51</height>
         </rect>
        </property>
@@ -387,6 +434,11 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
        </property>
        <property name="text">
         <string>Create Preview Segmentation Image</string>
