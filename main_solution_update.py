@@ -526,7 +526,7 @@ class Interface:
         for k in r_values:
             ans= (binom.pmf(k, n, p)) * n
             if float(ans) > 0.05:
-                dist.append(ans)
+                dist.append(int(math.ceil(ans)))
         # printing the table
         print('\n', "<--------------- Binomial distribution simulation: --------------->", '\n')
         print(len(dist))
