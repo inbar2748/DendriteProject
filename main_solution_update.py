@@ -124,7 +124,7 @@ class Interface:
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
         p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
-        dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)  # threshold1= 200- 110- as the num is low- the lines are more
+        dst = cv.Canny(blur, self.p_threshold1,255, None, 3)
         # detect
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
         # threshold1 – first threshold for the hysteresis procedure
@@ -834,7 +834,7 @@ class Interface:
             return -1
         blur = cv.GaussianBlur(src, (5, 5), 0)
         p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
-        dst = cv.Canny(blur, 50, self.p_threshold1, None, 3)
+        dst = cv.Canny(blur, self.p_threshold1,110, None, 3)
         (DendriteList, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
         self.preview_figure = plt.figure("Preview segmentation line detection")
         ax = plt.gca()
