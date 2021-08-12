@@ -123,8 +123,8 @@ class Interface:
         """
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
-        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
-        dst = cv.Canny(blur, self.p_threshold1,255, None, 3)
+        p_threshold2= self.p_threshold1*3 if self.p_threshold1 <= 85 else 255
+        dst = cv.Canny(src, self.p_threshold1,p_threshold2, None, 3)
         # detect
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
         # threshold1 – first threshold for the hysteresis procedure
@@ -171,7 +171,7 @@ class Interface:
         print("information for each dendrite: ")
         DendriteList.sort()
         RangeMap = dict()
-        x = (180 / len(DendriteList))  # angle to group
+        x = 5 if 180 / len(DendriteList) < 36 else (180 / len(DendriteList)) # angle to group
         for dendrite in DendriteList:
             min_angle = dendrite.angle - x
             max_angle = dendrite.angle + x
@@ -833,8 +833,9 @@ class Interface:
             print('Error opening image!')
             return -1
         blur = cv.GaussianBlur(src, (5, 5), 0)
-        p_threshold1 = self.p_threshold1 if self.p_threshold1 else 110
-        dst = cv.Canny(blur, self.p_threshold1,110, None, 3)
+        p_threshold2 = self.p_threshold1 * 3 if self.p_threshold1 <= 85 else 255
+        dst = cv.Canny(src, self.p_threshold1, p_threshold2, None, 3)
+
         (DendriteList, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
         self.preview_figure = plt.figure("Preview segmentation line detection")
         ax = plt.gca()

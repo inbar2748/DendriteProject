@@ -1,4 +1,18 @@
-PROTOCOL: 
+# SOA
+
+## Install
+The `requirements.txt` file list all requirements Python libraries , and they will be installed using:
+
+```
+pip install -r requirements.txt
+```
+
+```
+python ./SOA.py
+```
+
+
+##  PROTOCOL: 
 
 The Israeli Ministry of Health approved the use of mice under protocol IL-218-01-21 for the ethical use of experimental animals.
 SOA is designed to work with Windows 10 only and Python 3. 
