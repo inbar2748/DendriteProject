@@ -171,7 +171,7 @@ class Interface:
         print("information for each dendrite: ")
         DendriteList.sort()
         RangeMap = dict()
-        x = 5 if 180 / len(DendriteList) < 36 else (180 / len(DendriteList)) # angle to group
+        x = 5 if 180 / len(DendriteList) < 36 else (180 / len(DendriteList))   # angle to group
         for dendrite in DendriteList:
             min_angle = dendrite.angle - x
             max_angle = dendrite.angle + x
