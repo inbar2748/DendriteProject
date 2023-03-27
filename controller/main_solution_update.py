@@ -18,9 +18,13 @@ from scipy import stats
 from scipy.stats import binom
 import seaborn as sns
 from pylab import *
-from Distance import DistanceBL
+
+from controller.excelCreator import create_excel
+from model.Dendrite import Dendrite
+from model.Distance import DistanceBL
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FormatStrFormatter
-from excelCreator import *
+from model.Range import Range
+from model.Vector import Vector
 
 
 def histogram(lis):
@@ -34,57 +38,6 @@ def histogram(lis):
                 count = count + 1
         hist = hist + [count]
     return hist
-
-
-class Vector:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __str__(self):
-        return "(x: {0}, y: {1})".format(self.x, self.y)
-
-    def tuple(self):
-        return print(self.x, self.y)
-
-
-class Dendrite:
-
-    def __init__(self, id_, length, vector1, vector2, angle):
-        self.id = id_
-        self.length = round(length * 0.167, 2)
-        self.vector1 = vector1
-        self.vector2 = vector2
-        self.angle = round(angle, 2)
-
-    def __eq__(self, other):
-        return self.angle == other.angle
-
-    def __lt__(self, other):
-        return self.angle < other.angle
-
-    def __str__(self):
-        return "id: {0} , length: {1}, vector1: {2}, vector2: {3}, angle: {4} ".format(self.id, self.length,
-                                                                                       self.vector1, self.vector2,
-                                                                                       self.angle)
-
-    def to_dict(self):
-        return {"id": self.id, "length": self.length, "vector1": self.vector1.__str__(),
-                "vector2": self.vector2.__str__(), "angle": self.angle}
-
-
-class Range:
-
-    def __init__(self, min_, max_, id_, angle, length, dendrite):
-        self.min = round(min_, 2)
-        self.max = round(max_, 2)
-        self.id = id_
-        self.angle = round(angle, 2)
-        self.length = round(length, 2)
-        self.dendrite = dendrite
-
-    def __str__(self):
-        return "Dendrite: {0} , \nrange: {1}---> {2}".format(self.dendrite, self.min, self.max)
 
 
 class Interface:
