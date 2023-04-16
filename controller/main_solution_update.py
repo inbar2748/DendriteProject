@@ -21,7 +21,7 @@ from pylab import *
 
 from controller.excelCreator import create_excel
 from model.Dendrite import Dendrite
-from model.Distance import DistanceBL
+from model.Distance import DistanceBetweenLines
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FormatStrFormatter
 from model.Range import Range
 from model.Vector import Vector
@@ -119,13 +119,13 @@ class Interface:
 
         # __________________regular pic_______________________________________
 
-        (DendriteList, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
+        (dendrite_list, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
 
         print("information for each dendrite: ")
-        DendriteList.sort()
+        dendrite_list.sort()
         RangeMap = dict()
-        x = 5 if 180 / len(DendriteList) < 36 else (180 / len(DendriteList))   # angle to group
-        for dendrite in DendriteList:
+        x = 5 if 180 / len(dendrite_list) < 36 else (180 / len(dendrite_list))   # angle to group
+        for dendrite in dendrite_list:
             min_angle = dendrite.angle - x
             max_angle = dendrite.angle + x
             range_angle = Range(min_angle, max_angle, dendrite.id, dendrite.angle, dendrite.length, dendrite)
@@ -135,31 +135,31 @@ class Interface:
 
         print('\n', "<--------------- classification of parallel groups: --------------->", '\n')
 
-        for dendrite in DendriteList:
+        for dendrite in dendrite_list:
             angle_another = dendrite.angle
             id_another = dendrite.id
             for key, value in RangeMap.items():
                 if (angle_another >= key.min and angle_another <= key.max and id_another != key.id):
                     value.append(dendrite)
-        ModifyRangeMap = dict()
-        NotParallelMap = dict()
+        modify_range_map = dict()
+        not_parallel_map = dict()
         for key, value in RangeMap.items():
             if len(value) != 0:
-                ModifyRangeMap.update({key: value})
+                modify_range_map.update({key: value})
             else:
-                NotParallelMap.update({key: value})
+                not_parallel_map.update({key: value})
 
         print("Parallel:\n")
-        for key, value in ModifyRangeMap.items():
+        for key, value in modify_range_map.items():
             print('\nKey: {0}: \nnumber of parallel lines: {1}'.format(key, len(value)), *value, sep='\n')
 
         print("\nNot Parallel:\n")
-        for key, value in NotParallelMap.items():
+        for key, value in not_parallel_map.items():
             print(f'{key}: {value} number of parallel lines: {len(value)}\n')
 
         # combine
-        combined_dict = ModifyRangeMap
-        combined_dict.update(NotParallelMap)
+        combined_dict = modify_range_map
+        combined_dict.update(not_parallel_map)
 
         # sorting results
         final_result = []
@@ -184,25 +184,24 @@ class Interface:
 
         # ----------------short distance between lines------------------
 
-        ComputeDistance = DistanceBL()
-        DistanceComputed = dict()
-        for key, value in ModifyRangeMap.items():
+        distance_computed = dict()
+        for key, value in modify_range_map.items():
             a1 = np.array([key.dendrite.vector1.x, key.dendrite.vector1.y, 1])
             a0 = np.array([key.dendrite.vector2.x, key.dendrite.vector2.y, 1])
             shortlist = []
             for parallel_dendirte in value:
                 b0 = np.array([parallel_dendirte.vector1.x, parallel_dendirte.vector1.y, 1])
                 b1 = np.array([parallel_dendirte.vector2.x, parallel_dendirte.vector2.y, 1])
-                temp = ComputeDistance.closestDistanceBetweenLines(a0, a1, b0, b1)
+                temp = DistanceBetweenLines.closest_distance_between_lines(a0, a1, b0, b1)
                 shortlist.append(temp)
-            DistanceComputed.update({key.id: shortlist})
+            distance_computed.update({key.id: shortlist})
 
         print('\n', "<--------------- The shortest distance between Parallel groups: --------------->", '\n')
         print('ID:   distance to parallel [\u03BCm]:')
 
         final_final_data = []
 
-        for key, value in DistanceComputed.items():
+        for key, value in distance_computed.items():
             d_data = next(filter(lambda x: x["dendrite id"] == key, final_result))
 
             res = {"dendrite id": d_data["dendrite id"],
@@ -233,23 +232,23 @@ class Interface:
         def average(l):
             if len(l)==0:
                 return 0
-            sumLength = 0
+            sum_length = 0
             for key_, value_ in l.items():
-                sumLength = sumLength + key_.length
-            total = sumLength
+                sum_length = sum_length + key_.length
+            total = sum_length
             total = float(total)
             return round(total / len(l), 2)
 
         error_listp = []
-        error_listNp = []
-        for key_, value_ in ModifyRangeMap.items():
+        error_list_np = []
+        for key_, value_ in modify_range_map.items():
             error_listp.append(key_.length)
-        for key_, value_ in NotParallelMap.items():
-            error_listNp.append(key_.length)
+        for key_, value_ in not_parallel_map.items():
+            error_list_np.append(key_.length)
         if len(error_listp) == 0:
             error_listp.append(0)
-        if len(error_listNp) == 0:
-            error_listNp.append(0)
+        if len(error_list_np) == 0:
+            error_list_np.append(0)
 
         def standard_error(group):
             if len(group) == 0:
@@ -257,10 +256,10 @@ class Interface:
             return round(stats.sem(group, axis=None, ddof=0), 2)
 
 
-        print('\nAverage of all the parallels lines:', (average(ModifyRangeMap)))
+        print('\nAverage of all the parallels lines:', (average(modify_range_map)))
         print('Standard Error of all the parallels lines:', standard_error(error_listp))
-        print('\nAverage of all the NOT parallels lines:', (average(NotParallelMap)))
-        print('Standard Error of all the NOT parallels lines:', standard_error(error_listNp))
+        print('\nAverage of all the NOT parallels lines:', (average(not_parallel_map)))
+        print('Standard Error of all the NOT parallels lines:', standard_error(error_list_np))
 
         # ----------------------------------------------------------------------
 
@@ -291,14 +290,14 @@ class Interface:
 
         # ---------fig2-------binomial_distribution of random grows:------------------
 
-        self.binomial_distribution(DendriteList, ModifyRangeMap)
+        self.binomial_distribution(dendrite_list, modify_range_map)
 
         # ------------fig3 -angles scatter plot of dendrites------
-        x1 = [0] * (len(DendriteList))
-        y1 = [0] * (len(DendriteList))
+        x1 = [0] * (len(dendrite_list))
+        y1 = [0] * (len(dendrite_list))
 
         i = 0
-        for dendrite in DendriteList:
+        for dendrite in dendrite_list:
             # x-axis values
             xAngle = dendrite.angle
             x1[i] = xAngle
@@ -326,10 +325,10 @@ class Interface:
             plt.annotate(txt, (x1[i], y1[i]),fontsize=25)
 
         # tell matplotlib to use the format specified above
-        ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(DendriteList))))
+        ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(dendrite_list))))
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
         ax.xaxis.grid(True, which='minor')
-        ax.xaxis.set_minor_locator(MultipleLocator(int(180 / len(DendriteList))))
+        ax.xaxis.set_minor_locator(MultipleLocator(int(180 / len(dendrite_list))))
         ax.tick_params(axis='x', rotation=70)
         # plt.yticks([])
         plt.yticks(fontsize=20)
@@ -339,17 +338,17 @@ class Interface:
         # plt.title('figure 3- Range of angles:')
 
         plt.subplot(2, 1, 2)
-        plt.hist(x1, bins=int(len(DendriteList)), range=[0, 180], rwidth=1, color='b', edgecolor='black',lw=0)
+        plt.hist(x1, bins=int(len(dendrite_list)), range=[0, 180], rwidth=1, color='b', edgecolor='black',lw=0)
         ax = plt.gca()
         ax.set_xlim(0, 180)
         # plt.yticks(range(1,5))
         plt.yticks(fontsize=20)
         plt.xticks(fontsize=20)
         ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-        ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(DendriteList))))
+        ax.xaxis.set_major_locator(MultipleLocator(int(180 / len(dendrite_list))))
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
-        ax.xaxis.set_minor_locator(MultipleLocator(int(180 / len(DendriteList))))
+        ax.xaxis.set_minor_locator(MultipleLocator(int(180 / len(dendrite_list))))
         ax.tick_params(axis='x', rotation=70)
         # ax.set(xlabel="x - Angles", ylabel="# of dendrite")
         plt.xlabel('Angles [°]', fontsize=25,fontweight='bold')
@@ -373,17 +372,17 @@ class Interface:
         # plt.show()
         # ------------fig4 -length scatter plot of dendrites------
         sns.set(color_codes=True)
-        x2 = [0] * (len(ModifyRangeMap))
-        x3 = [0] * (len(NotParallelMap))
+        x2 = [0] * (len(modify_range_map))
+        x3 = [0] * (len(not_parallel_map))
 
         i = 0
-        for key, value in ModifyRangeMap.items():
+        for key, value in modify_range_map.items():
             # x-axis values
             xLength = key.length
             x2[i] = xLength
             i = i + 1
         j = 0
-        for key, value in NotParallelMap.items():
+        for key, value in not_parallel_map.items():
             # x-axis values
             x3Length = key.length
             x3[j] = x3Length
@@ -401,17 +400,17 @@ class Interface:
 
         plt.figure("Length distribution of parallel vs. non-parallel dendritic branches")
         plt.subplot(2, 1, 1)
-        plt.hist(x3, bins=int(len(DendriteList)), range=[0, x3[len(x3) - 1]], rwidth=1, color='blue',
+        plt.hist(x3, bins=int(len(dendrite_list)), range=[0, x3[len(x3) - 1]], rwidth=1, color='blue',
                  edgecolor='black', lw=1)
         ax = plt.gca()
         ax.set_ylim(0, len(x3))
         ax.set_xlim(0, x_range)
         plt.yticks(fontsize=20)
         plt.xticks(fontsize=20)
-        ax.xaxis.set_major_locator(MultipleLocator(180 / len(DendriteList)))
+        ax.xaxis.set_major_locator(MultipleLocator(180 / len(dendrite_list)))
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
-        ax.xaxis.set_minor_locator(MultipleLocator(180 / len(DendriteList)))
+        ax.xaxis.set_minor_locator(MultipleLocator(180 / len(dendrite_list)))
         ax.tick_params(axis='x', rotation=45)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
         # plt.xlabel('Length', fontsize=18)
@@ -419,12 +418,12 @@ class Interface:
         ax.set_facecolor('#d8dcd6')
         # plt.suptitle('figure 2- Range of length:', fontsize=14, fontweight='bold')
         # plt.title('NOT parallel groups vs. parallel groups')
-        avg1 = (average(NotParallelMap))
+        avg1 = (average(not_parallel_map))
         anchored_text = AnchoredText("Average of all 'NOT Parallels' groups: " + str("{:.1f}".format(float(avg1))) +
                                      u"\u03BCm" +
                                      "\nStandard Error of all 'NOT Parallels' lines: " +
                                      str("{:.1f}".format(
-                                         float(stats.sem(error_listNp, axis=None, ddof=0)))) + u"\u03BCm",
+                                         float(stats.sem(error_list_np, axis=None, ddof=0)))) + u"\u03BCm",
                                      loc=1, prop={"size": 19})
         ax.add_artist(anchored_text)
         plt.grid(True)
@@ -432,11 +431,11 @@ class Interface:
 
 
         plt.subplot(2, 1, 2)
-        plt.hist(x2, bins=int(len(DendriteList)), range=[0, x2[len(x2) - 1]], rwidth=1, color='blue',
+        plt.hist(x2, bins=int(len(dendrite_list)), range=[0, x2[len(x2) - 1]], rwidth=1, color='blue',
                  edgecolor='black', lw=1)
         ax = plt.gca()
         ax.set_xlim(0, x_range)
-        ax.xaxis.set_major_locator(MultipleLocator(180 / len(DendriteList)))
+        ax.xaxis.set_major_locator(MultipleLocator(180 / len(dendrite_list)))
         ax.yaxis.set_minor_locator(AutoMinorLocator())
         ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
         ax.xaxis.set_minor_locator(AutoMinorLocator())
@@ -447,7 +446,7 @@ class Interface:
         plt.xticks(fontsize=20)
         # ax.xaxis.set_major_formatter(StrMethodFormatter(u" {x:.0f}\u03BCm"))
         ax.set_facecolor('#d8dcd6')
-        avg2 = (average(ModifyRangeMap))
+        avg2 = (average(modify_range_map))
         anchored_text = AnchoredText("Average of all 'Parallels' groups: " + str("{:.1f}".format(float(avg2))) +
                                      u"\u03BCm" +
                                      "\nStandard Error of all Parallels lines: " +
@@ -650,47 +649,46 @@ class Interface:
             return False
 
     #
-    def lineMagnitude(self, x1, y1, x2, y2):
-        lineMagnitude = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-        return lineMagnitude
+    def line_magnitude(self, x1, y1, x2, y2):
+        return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
         # Calc minimum distance from a point and a line segment (i.e. consecutive vertices in a polyline).
         # https://nodedangles.wordpress.com/2010/05/16/measuring-distance-from-a-point-to-a-line-segment/
         # http://paulbourke.net/geometry/pointlineplane/
 
-    def DistancePointLine(self, px, py, x1, y1, x2, y2):
+    def distance_point_line(self, px, py, x1, y1, x2, y2):
         # http://local.wasp.uwa.edu.au/~pbourke/geometry/pointline/source.vba
-        LineMag = self.lineMagnitude(x1, y1, x2, y2)
+        line_mag = self.line_magnitude(x1, y1, x2, y2)
 
-        if LineMag < 0.00000001:
-            DistancePointLine = 9999
-            return DistancePointLine
+        if line_mag < 0.00000001:
+            distance_point_line = 9999
+            return distance_point_line
 
         u1 = (((px - x1) * (x2 - x1)) + ((py - y1) * (y2 - y1)))
-        u = u1 / (LineMag * LineMag)
+        u = u1 / (line_mag * line_mag)
 
         if (u < 0.00001) or (u > 1):
             # // closest point does not fall within the line segment, take the shorter distance
             # // to an endpoint
-            ix = self.lineMagnitude(px, py, x1, y1)
-            iy = self.lineMagnitude(px, py, x2, y2)
+            ix = self.line_magnitude(px, py, x1, y1)
+            iy = self.line_magnitude(px, py, x2, y2)
             if ix > iy:
-                DistancePointLine = iy
+                distance_point_line = iy
             else:
-                DistancePointLine = ix
+                distance_point_line = ix
         else:
             # Intersecting point is on the line, use the formula
             ix = x1 + u * (x2 - x1)
             iy = y1 + u * (y2 - y1)
-            DistancePointLine = self.lineMagnitude(px, py, ix, iy)
+            distance_point_line = self.line_magnitude(px, py, ix, iy)
 
-        return DistancePointLine
+        return distance_point_line
 
     def get_distance(self, line1, line2):
-        dist1 = self.DistancePointLine(line1[0][0], line1[0][1], line2[0][0], line2[0][1], line2[1][0], line2[1][1])
-        dist2 = self.DistancePointLine(line1[1][0], line1[1][1], line2[0][0], line2[0][1], line2[1][0], line2[1][1])
-        dist3 = self.DistancePointLine(line2[0][0], line2[0][1], line1[0][0], line1[0][1], line1[1][0], line1[1][1])
-        dist4 = self.DistancePointLine(line2[1][0], line2[1][1], line1[0][0], line1[0][1], line1[1][0], line1[1][1])
+        dist1 = self.distance_point_line(line1[0][0], line1[0][1], line2[0][0], line2[0][1], line2[1][0], line2[1][1])
+        dist2 = self.distance_point_line(line1[1][0], line1[1][1], line2[0][0], line2[0][1], line2[1][0], line2[1][1])
+        dist3 = self.distance_point_line(line2[0][0], line2[0][1], line1[0][0], line1[0][1], line1[1][0], line1[1][1])
+        dist4 = self.distance_point_line(line2[1][0], line2[1][1], line1[0][0], line1[0][1], line1[1][0], line1[1][1])
 
         return min(dist1, dist2, dist3, dist4)
 
@@ -740,7 +738,7 @@ class Interface:
         print("The number of lines identified in the image: ", len(merged_lines_all), '\n')
         img_merged_lines = cdst
 
-        DendriteList = []
+        dendrite_list = []
         id_ = 0
         for line in merged_lines_all:
             cv.line(img_merged_lines, (line[0][0], line[0][1]), (line[1][0], line[1][1]), (255, 255, 0), 3, cv.LINE_AA)
@@ -770,8 +768,8 @@ class Interface:
 
             # print('angle:', radians, '\n')
             id_ = id_ + 1
-            DendriteList.append(Dendrite(id_, dist, v1, v2, turn_degrees % 180))  # %360
-        return (DendriteList, img_merged_lines, _lines ,merged_lines_all )
+            dendrite_list.append(Dendrite(id_, dist, v1, v2, turn_degrees % 180))  # %360
+        return (dendrite_list, img_merged_lines, _lines ,merged_lines_all )
 
 
 
@@ -789,7 +787,7 @@ class Interface:
         p_threshold2 = self.p_threshold1 * 3 if self.p_threshold1 <= 85 else 255
         dst = cv.Canny(src, self.p_threshold1, p_threshold2, None, 3)
 
-        (DendriteList, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
+        (dendrite_list, img_merged_lines, _lines, merged_lines_all) = self.get_detected_picture(dst)
         self.preview_figure = plt.figure("Preview segmentation line detection")
         ax = plt.gca()
         scalebar = ScaleBar(0.167, 'um')
