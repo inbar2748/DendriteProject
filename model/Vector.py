@@ -5,6 +5,3 @@ class Vector:
 
     def __str__(self):
         return "(x: {0}, y: {1})".format(self.x, self.y)
-
-    def tuple(self):
-        return print(self.x, self.y)
