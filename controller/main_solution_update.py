@@ -312,7 +312,7 @@ class Interface:
 
         # ---------fig2-------binomial_distribution of random grows:------------------
 
-        self.binomial_distribution(dendrite_list, modify_range_map)
+        self.binomial_distribution(dendrite_list, modify_range_map, merged_lines_all )
 
         # ------------fig3 -angles scatter plot of dendrites------
         x1 = [0] * (len(dendrite_list))
@@ -486,7 +486,7 @@ class Interface:
 
         #return merged_lines_all
 
-    def binomial_distribution(self, dendrite_list, parallel_modify_range_map):
+    def binomial_distribution(self, dendrite_list, parallel_modify_range_map, merged_lines_all):
         # setting the values of n and p
         # defining the list of k values
         n = len(dendrite_list)
@@ -521,6 +521,22 @@ class Interface:
         print ("Measured Classification")
         for i in range(1, len(values_)):
             print(f'{i+1}: {values_[i]}')
+
+        print('\n', "<--------------- Calculation of the percentage of parallelism in relation to the simulation: --------------->", '\n')
+        # simulation
+        sum_all_simulation_lines = 0
+        for i in range(2, len(dist)):
+            sum_all_simulation_lines += i*dist[i]
+        print( "simulation: ", sum_all_simulation_lines/(len(merged_lines_all)))
+
+        # measured
+        sum_all_measured_lines = 0
+        for i in range(1, len(values_)):
+            sum_all_measured_lines += (i + 1) * (values_[i])
+        print("measured: ", sum_all_measured_lines / (len(merged_lines_all)))
+
+        print('\n',"<---------------  Long - term  parallels of S\E: --------------->",'\n')
+        print(sum_all_simulation_lines/sum_all_measured_lines)
 
         # -------------------fig2 ---------------------
 
