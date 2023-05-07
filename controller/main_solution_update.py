@@ -19,7 +19,7 @@ from scipy.stats import binom
 import seaborn as sns
 from pylab import *
 
-from controller.excelCreator import create_excel
+from controller.excel_creator import create_excel
 from model.Dendrite import Dendrite
 from model.Distance import DistanceBetweenLines
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FormatStrFormatter
@@ -38,6 +38,21 @@ def histogram(lis):
                 count = count + 1
         hist = hist + [count]
     return hist
+
+
+def remove_duplication(ranges_with_dendrites):
+    sorted_data = dict(sorted(ranges_with_dendrites.items(), key=lambda item: len(item[1]), reverse=True))
+    for range, dendrite_data in sorted_data.items():
+        for dendrite in dendrite_data:
+            for query_range in sorted_data.keys():
+                if query_range.dendrite.id == dendrite.id:
+                    sorted_data[query_range].clear()
+    for range, dendrite_data in sorted_data.items():
+        if len(dendrite_data) == 0:
+            ranges_with_dendrites.pop(range)
+
+    return ranges_with_dendrites
+
 
 
 class Interface:
@@ -123,14 +138,14 @@ class Interface:
 
         print("information for each dendrite: ")
         dendrite_list.sort()
-        RangeMap = dict()
+        range_map = dict()
         x = 5 if 180 / len(dendrite_list) < 36 else (180 / len(dendrite_list))   # angle to group
         for dendrite in dendrite_list:
             min_angle = dendrite.angle - x
             max_angle = dendrite.angle + x
             range_angle = Range(min_angle, max_angle, dendrite.id, dendrite.angle, dendrite.length, dendrite)
-            if RangeMap.get(range_angle) is None:
-                RangeMap.update({range_angle: []})
+            if range_map.get(range_angle) is None:
+                range_map.update({range_angle: []})
             print(dendrite)
 
         print('\n', "<--------------- classification of parallel groups: --------------->", '\n')
@@ -138,27 +153,34 @@ class Interface:
         for dendrite in dendrite_list:
             angle_another = dendrite.angle
             id_another = dendrite.id
-            for key, value in RangeMap.items():
-                if (angle_another >= key.min and angle_another <= key.max and id_another != key.id):
+            for key, value in range_map.items():
+                if key.min <= angle_another <= key.max and id_another != key.id:
                     value.append(dendrite)
         modify_range_map = dict()
         not_parallel_map = dict()
-        for key, value in RangeMap.items():
+        for key, value in range_map.items():
             if len(value) != 0:
                 modify_range_map.update({key: value})
             else:
                 not_parallel_map.update({key: value})
 
-        print("Parallel:\n")
+        print("Parallel:")
         for key, value in modify_range_map.items():
-            print('\nKey: {0}: \nnumber of parallel lines: {1}'.format(key, len(value)), *value, sep='\n')
+            print('Key: {0}: \nnumber of parallel lines: {1}'.format(key.id, len(value)), *value, sep='\n')
 
         print("\nNot Parallel:\n")
         for key, value in not_parallel_map.items():
             print(f'{key}: {value} number of parallel lines: {len(value)}\n')
+            pass
 
+        modify_range_map = remove_duplication(modify_range_map)
+
+        print("Parallel after cleaning duplicate:")
+        for key, value in modify_range_map.items():
+            print('Key: {0}: \nnumber of parallel lines: {1}'.format(key.id, len(value)), *value, sep='\n')
         # combine
-        combined_dict = modify_range_map
+        combined_dict = dict()
+        combined_dict.update(modify_range_map)
         combined_dict.update(not_parallel_map)
 
         # sorting results
@@ -167,8 +189,8 @@ class Interface:
         for k in combined_dict.keys():
             d_id = k.id
             d_length = k.length
-            d_v1 = k.dendrite.vector1.__str__()
-            d_v2 = k.dendrite.vector2.__str__()
+            d_v1 = str(k.dendrite.vector1)
+            d_v2 = str(k.dendrite.vector2)
             d_angle = k.angle
             d_min = k.min
             d_max = k.max
@@ -464,36 +486,41 @@ class Interface:
 
         #return merged_lines_all
 
-    def binomial_distribution(self, DendriteList, ModifyRangeMap):
+    def binomial_distribution(self, dendrite_list, parallel_modify_range_map):
         # setting the values of n and p
         # defining the list of k values
-        n = len(DendriteList)
+        n = len(dendrite_list)
         p = 1 / n
-        r_values = list(range(n + 1))
+        s_values = list(range(n))
         # obtaining the mean and variance
         mean, var = binom.stats(n, p)
         # list of pmf values
-        # dist = [(binom.pmf(k, n, p)) * n for k in r_values]
+        # dist = [(binom.pmf(k, n, p)) * n for k in s_values]
         dist =[]
-        for k in r_values:
+        for k in s_values:
             ans= (binom.pmf(k, n, p)) * n
             if float(ans) > 0.05:
                 dist.append(int(math.ceil(ans)))
         # printing the table
         print('\n', "<--------------- Binomial distribution simulation: --------------->", '\n')
-        print(len(dist))
+        print ("Random simulation Classification")
+        for i in range(2, len(dist)):
+            print(f'{i}: {dist[i]}')
         print("k\tp(k)")
-        # for index_ in r_values:
-        #     print(str(r_values[index_]) + "\t" + "{:.2f}".format(float(dist[index_])))
+        # for index_ in s_values:
+        #     print(str(s_values[index_]) + "\t" + "{:.2f}".format(float(dist[index_])))
         #     # printing mean and variance
         # print("mean = " + str(mean))
         # print("variance = " + str(var))
 
         parallel_histlist = []
-        for key, value in ModifyRangeMap.items():
+        for key, value in parallel_modify_range_map.items():
             parallel_histlist.append(len(value) + 1)
             # print(parallel_histlist)
         values_ = histogram(parallel_histlist)
+        print ("Measured Classification")
+        for i in range(1, len(values_)):
+            print(f'{i+1}: {values_[i]}')
 
         # -------------------fig2 ---------------------
 
@@ -502,9 +529,10 @@ class Interface:
         else:
             y_group_range = max(dist[2:len(dist)])
 
+        y_group_range = max(max(values_), max(dist))
         plt.figure("Classification of dendritic branch parallel growth vs random simulation")
         plt.subplot(1, 2, 1)
-        plt.bar(range(2,len(values_)+2),
+        plt.bar(x=list(range(1, len(values_)+1)),
                 height=values_,
                 color="blue", width=0.35)
         # plt.yticks(range(0, max(values_)))
@@ -523,7 +551,7 @@ class Interface:
 
         plt.subplot(1, 2, 2)
 
-        plt.bar(r_values[2:len(dist)],
+        plt.bar(s_values[2:len(dist)],
                 height=dist[2:len(dist)],
                 color="blue", width=0.35)
         plt.ylim([0, y_group_range])
@@ -539,6 +567,7 @@ class Interface:
         plt.tight_layout()
 
         plt.show()
+
     def merge_lines_pipeline_2(self, lines):
         super_lines_final = []
         super_lines = []
