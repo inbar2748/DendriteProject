@@ -312,7 +312,7 @@ class Interface:
 
         # ---------fig2-------binomial_distribution of random grows:------------------
 
-        self.binomial_distribution(dendrite_list, modify_range_map)
+        self.binomial_distribution(dendrite_list, modify_range_map, merged_lines_all )
 
         # ------------fig3 -angles scatter plot of dendrites------
         x1 = [0] * (len(dendrite_list))
@@ -382,16 +382,7 @@ class Interface:
         plt.tight_layout()
         plt.show()
 
-        # l4 = list(range(1, len(x1) + 1))
-        # plt.hist(range(len(x1)),
-        #         height=x1,
-        #         color="blue", width=0.35)
-        # plt.xticks(range(len(x1)), l4)
-        # plt.xticks(fontsize=14, rotation=45)
-        # plt.yticks(fontsize=14)
-        # ax.set(xlabel="x - Angles", ylabel="# of dendrite")
-        # plt.grid(True)
-        # plt.show()
+
         # ------------fig4 -length scatter plot of dendrites------
         sns.set(color_codes=True)
         x2 = [0] * (len(modify_range_map))
@@ -486,7 +477,7 @@ class Interface:
 
         #return merged_lines_all
 
-    def binomial_distribution(self, dendrite_list, parallel_modify_range_map):
+    def binomial_distribution(self, dendrite_list, parallel_modify_range_map, merged_lines_all):
         # setting the values of n and p
         # defining the list of k values
         n = len(dendrite_list)
@@ -521,6 +512,34 @@ class Interface:
         print ("Measured Classification")
         for i in range(1, len(values_)):
             print(f'{i+1}: {values_[i]}')
+
+        print('\n', "<--------------- Calculation of the percentage of parallelism in relation to the simulation: --------------->", '\n')
+        # simulation
+        sum_all_simulation_lines = 0
+        for i in range(2, len(dist)):
+            sum_all_simulation_lines += i*dist[i]
+        print( "simulation: ", sum_all_simulation_lines/(len(merged_lines_all)))
+
+        # measured
+        sum_all_measured_lines = 0
+        for i in range(1, len(values_)):
+            sum_all_measured_lines += (i + 1) * (values_[i])
+        print("measured: ", sum_all_measured_lines / (len(merged_lines_all)))
+
+        print("E\S: ", sum_all_measured_lines / sum_all_simulation_lines )
+
+
+        print('\n',"<---------------  Long - term  parallels of E\S: --------------->",'\n')
+        # simulation with weights - in the long term
+        sum_all_simulation_lines_weights = 0
+        for i in range(2, len(dist)):
+            sum_all_simulation_lines_weights += i * i * dist[i]
+
+        # measured with weights - in the long term
+        sum_all_measured_lines_weights = 0
+        for i in range(1, len(values_)):
+            sum_all_measured_lines_weights += (i + 1) * (i + 1) * (values_[i])
+        print("Measured (E) with weights)\ Simulation (S) with weights): " , sum_all_measured_lines_weights / sum_all_simulation_lines_weights)
 
         # -------------------fig2 ---------------------
 
