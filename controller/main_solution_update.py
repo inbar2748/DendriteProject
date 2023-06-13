@@ -14,12 +14,14 @@ import math
 from matplotlib.offsetbox import AnchoredText
 from matplotlib_scalebar.scalebar import ScaleBar
 import cv2 as cv
+import os.path
 from scipy import stats
 from scipy.stats import binom
 import seaborn as sns
 from pylab import *
 
 from controller.excel_creator import create_excel
+from controller.excel_statistics_data import excel_statistics_data
 from model.Dendrite import Dendrite
 from model.Distance import DistanceBetweenLines
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FormatStrFormatter
@@ -61,8 +63,8 @@ class Interface:
         super(Interface, self).__init__()
         self.p_file_path = None
         self.p_threshold1 = None
-        self.min_distance_to_merge = None
-        self.min_angle_to_merge = None
+        self.min_distance_to_merge = 20
+        self.min_angle_to_merge = 10
         self.excel_file = None
         self.preview_figure = None
 
@@ -73,22 +75,17 @@ class Interface:
 
     def main(self):
         plt.close('all')
-        default_file = 'den.png'
         p_file_path = self.p_file_path
-        # p_file_path = self.p_file_path if self.p_file_path else 'Parallel 8a dendrites 12 DIV X40 (1).png'
+        p_file_name = os.path.basename(p_file_path)
+        print("file name:", p_file_name)
+
 
         src = cv.imread(p_file_path, cv.COLOR_BGR2HLS)
 
         # Check if image is loaded fine
         if src is None:
             print('Error opening image!')
-            print('Usage: hough_lines.py [' + default_file + '] \n')
             return -1
-
-        """img = cv.imread('_.png')
-        imgplot = plt.imshow(img)
-        plt.show(imgplot)
-        """
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
         p_threshold2= self.p_threshold1*3 if self.p_threshold1 <= 85 else 255
@@ -97,14 +94,6 @@ class Interface:
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
         # threshold1 – first threshold for the hysteresis procedure
 
-        # -----------binary image
-        # gray()
-        # figure(0)
-        # scalebar = ScaleBar(0.167, 'um')
-        # plt.gca().add_artist(scalebar)
-        # imshow(dst)
-        # plt.xticks([]), plt.yticks([])
-        # plt.show()
         # __________________primitive pic_______________________________________
         # Copy edges to the images that will display the results in BGR
 
@@ -497,12 +486,7 @@ class Interface:
         print ("Random simulation Classification")
         for i in range(2, len(dist)):
             print(f'{i}: {dist[i]}')
-        print("k\tp(k)")
-        # for index_ in s_values:
-        #     print(str(s_values[index_]) + "\t" + "{:.2f}".format(float(dist[index_])))
-        #     # printing mean and variance
-        # print("mean = " + str(mean))
-        # print("variance = " + str(var))
+
 
         parallel_histlist = []
         for key, value in parallel_modify_range_map.items():
@@ -518,15 +502,17 @@ class Interface:
         sum_all_simulation_lines = 0
         for i in range(2, len(dist)):
             sum_all_simulation_lines += i*dist[i]
-        print( "simulation: ", sum_all_simulation_lines/(len(merged_lines_all)))
+        percentagePS = sum_all_simulation_lines/(len(merged_lines_all))
+        print( "simulation: ", percentagePS)
 
         # measured
         sum_all_measured_lines = 0
         for i in range(1, len(values_)):
             sum_all_measured_lines += (i + 1) * (values_[i])
-        print("measured: ", sum_all_measured_lines / (len(merged_lines_all)))
-
-        print("E\S: ", sum_all_measured_lines / sum_all_simulation_lines )
+        percentagePM = sum_all_measured_lines / (len(merged_lines_all))
+        print("measured: ", percentagePM)
+        percentagePMS = sum_all_measured_lines / sum_all_simulation_lines
+        print("E\S: ", percentagePMS )
 
 
         print('\n',"<---------------  Long - term  parallels of E\S: --------------->",'\n')
@@ -539,7 +525,22 @@ class Interface:
         sum_all_measured_lines_weights = 0
         for i in range(1, len(values_)):
             sum_all_measured_lines_weights += (i + 1) * (i + 1) * (values_[i])
-        print("Measured (E) with weights)\ Simulation (S) with weights): " , sum_all_measured_lines_weights / sum_all_simulation_lines_weights)
+        LongtermES = sum_all_measured_lines_weights / sum_all_simulation_lines_weights
+        print("Measured (E) with weights)\ Simulation (S) with weights): " , LongtermES)
+
+        excel_statistics_data(filepath=os.path.dirname(self.excel_file),
+                              imagename=os.path.basename(self.p_file_path),
+                              pthreshold1=self.p_threshold1,
+                              min_distance_to_merge=self.min_distance_to_merge,
+                              min_angle_to_merge=self.min_angle_to_merge,
+                              linesnumber=len(merged_lines_all),
+                              Sclassification=dist,
+                              Mclassification=values_,
+                              percentagePS=percentagePS,
+                              percentagePM=percentagePM,
+                              percentagePMS=percentagePMS,
+                              LongtermES=LongtermES
+                              )
 
         # -------------------fig2 ---------------------
 
@@ -590,8 +591,8 @@ class Interface:
     def merge_lines_pipeline_2(self, lines):
         super_lines_final = []
         super_lines = []
-        min_distance_to_merge = self.min_distance_to_merge if self.min_distance_to_merge != None else 20
-        min_angle_to_merge = self.min_angle_to_merge if self.min_angle_to_merge != None else 10
+        min_distance_to_merge = self.min_distance_to_merge
+        min_angle_to_merge = self.min_angle_to_merge
 
         for line in lines:
             create_new_group = True
