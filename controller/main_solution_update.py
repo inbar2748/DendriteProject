@@ -21,6 +21,7 @@ import seaborn as sns
 from pylab import *
 
 from controller.excel_creator import create_excel
+from controller.excel_statistics_data import excel_statistics_data
 from model.Dendrite import Dendrite
 from model.Distance import DistanceBetweenLines
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator, FormatStrFormatter
@@ -62,8 +63,8 @@ class Interface:
         super(Interface, self).__init__()
         self.p_file_path = None
         self.p_threshold1 = None
-        self.min_distance_to_merge = None
-        self.min_angle_to_merge = None
+        self.min_distance_to_merge = 20
+        self.min_angle_to_merge = 10
         self.excel_file = None
         self.preview_figure = None
 
@@ -75,8 +76,8 @@ class Interface:
     def main(self):
         plt.close('all')
         p_file_path = self.p_file_path
-        file_name = os.path.basename(p_file_path)
-        print("file name:", file_name)
+        p_file_name = os.path.basename(p_file_path)
+        print("file name:", p_file_name)
 
 
         src = cv.imread(p_file_path, cv.COLOR_BGR2HLS)
@@ -501,15 +502,17 @@ class Interface:
         sum_all_simulation_lines = 0
         for i in range(2, len(dist)):
             sum_all_simulation_lines += i*dist[i]
-        print( "simulation: ", sum_all_simulation_lines/(len(merged_lines_all)))
+        percentagePS = sum_all_simulation_lines/(len(merged_lines_all))
+        print( "simulation: ", percentagePS)
 
         # measured
         sum_all_measured_lines = 0
         for i in range(1, len(values_)):
             sum_all_measured_lines += (i + 1) * (values_[i])
-        print("measured: ", sum_all_measured_lines / (len(merged_lines_all)))
-
-        print("E\S: ", sum_all_measured_lines / sum_all_simulation_lines )
+        percentagePM = sum_all_measured_lines / (len(merged_lines_all))
+        print("measured: ", percentagePM)
+        percentagePMS = sum_all_measured_lines / sum_all_simulation_lines
+        print("E\S: ", percentagePMS )
 
 
         print('\n',"<---------------  Long - term  parallels of E\S: --------------->",'\n')
@@ -522,7 +525,22 @@ class Interface:
         sum_all_measured_lines_weights = 0
         for i in range(1, len(values_)):
             sum_all_measured_lines_weights += (i + 1) * (i + 1) * (values_[i])
-        print("Measured (E) with weights)\ Simulation (S) with weights): " , sum_all_measured_lines_weights / sum_all_simulation_lines_weights)
+        LongtermES = sum_all_measured_lines_weights / sum_all_simulation_lines_weights
+        print("Measured (E) with weights)\ Simulation (S) with weights): " , LongtermES)
+
+        excel_statistics_data(filepath=os.path.dirname(self.excel_file),
+                              imagename=os.path.basename(self.p_file_path),
+                              pthreshold1=self.p_threshold1,
+                              min_distance_to_merge=self.min_distance_to_merge,
+                              min_angle_to_merge=self.min_angle_to_merge,
+                              linesnumber=len(merged_lines_all),
+                              Sclassification=dist,
+                              Mclassification=values_,
+                              percentagePS=percentagePS,
+                              percentagePM=percentagePM,
+                              percentagePMS=percentagePMS,
+                              LongtermES=LongtermES
+                              )
 
         # -------------------fig2 ---------------------
 
@@ -573,8 +591,8 @@ class Interface:
     def merge_lines_pipeline_2(self, lines):
         super_lines_final = []
         super_lines = []
-        min_distance_to_merge = self.min_distance_to_merge if self.min_distance_to_merge != None else 20
-        min_angle_to_merge = self.min_angle_to_merge if self.min_angle_to_merge != None else 10
+        min_distance_to_merge = self.min_distance_to_merge
+        min_angle_to_merge = self.min_angle_to_merge
 
         for line in lines:
             create_new_group = True
