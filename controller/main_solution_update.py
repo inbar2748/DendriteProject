@@ -14,6 +14,7 @@ import math
 from matplotlib.offsetbox import AnchoredText
 from matplotlib_scalebar.scalebar import ScaleBar
 import cv2 as cv
+import os.path
 from scipy import stats
 from scipy.stats import binom
 import seaborn as sns
@@ -73,22 +74,17 @@ class Interface:
 
     def main(self):
         plt.close('all')
-        default_file = 'den.png'
         p_file_path = self.p_file_path
-        # p_file_path = self.p_file_path if self.p_file_path else 'Parallel 8a dendrites 12 DIV X40 (1).png'
+        file_name = os.path.basename(p_file_path)
+        print("file name:", file_name)
+
 
         src = cv.imread(p_file_path, cv.COLOR_BGR2HLS)
 
         # Check if image is loaded fine
         if src is None:
             print('Error opening image!')
-            print('Usage: hough_lines.py [' + default_file + '] \n')
             return -1
-
-        """img = cv.imread('_.png')
-        imgplot = plt.imshow(img)
-        plt.show(imgplot)
-        """
 
         blur = cv.GaussianBlur(src, (5, 5), 0)
         p_threshold2= self.p_threshold1*3 if self.p_threshold1 <= 85 else 255
@@ -97,14 +93,6 @@ class Interface:
         # Python: cv.Canny(image, edges, threshold1, threshold2, aperture_size=3) → None
         # threshold1 – first threshold for the hysteresis procedure
 
-        # -----------binary image
-        # gray()
-        # figure(0)
-        # scalebar = ScaleBar(0.167, 'um')
-        # plt.gca().add_artist(scalebar)
-        # imshow(dst)
-        # plt.xticks([]), plt.yticks([])
-        # plt.show()
         # __________________primitive pic_______________________________________
         # Copy edges to the images that will display the results in BGR
 
@@ -497,12 +485,7 @@ class Interface:
         print ("Random simulation Classification")
         for i in range(2, len(dist)):
             print(f'{i}: {dist[i]}')
-        print("k\tp(k)")
-        # for index_ in s_values:
-        #     print(str(s_values[index_]) + "\t" + "{:.2f}".format(float(dist[index_])))
-        #     # printing mean and variance
-        # print("mean = " + str(mean))
-        # print("variance = " + str(var))
+
 
         parallel_histlist = []
         for key, value in parallel_modify_range_map.items():
