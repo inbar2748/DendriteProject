@@ -1,8 +1,17 @@
 import csv
 
 
-def excel_statistics_data(filepath, imagename, pthreshold1, min_distance_to_merge, min_angle_to_merge, linesnumber,
-                         Sclassification, Mclassification, percentagePS, percentagePM, percentagePMS,
+def excel_statistics_data(filepath,
+                          imagename,
+                          pthreshold1,
+                          min_distance_to_merge,
+                          min_angle_to_merge,
+                          linesnumber,
+                          Sclassification,
+                          Mclassification,
+                          percentagePS,
+                          percentagePM,
+                          percentagePMS,
                          LongtermES):
     with open(f'{filepath}/{imagename}.csv', 'w') as file:
         file_csv = csv.writer(file)
@@ -32,7 +41,17 @@ def excel_statistics_data(filepath, imagename, pthreshold1, min_distance_to_merg
                            'Calculation of the percentage of parallelism in relation to the simulation E/S',
                            'Long term parallels with weights calculation of E/S:'])
 
-        file_csv.writerow([imagename, pthreshold1, min_distance_to_merge, min_angle_to_merge, linesnumber, None ,
-                           simulation_classification, None , measured_classification, percentagePS, percentagePM, percentagePMS,
+        file_csv.writerow([imagename,
+                           pthreshold1,
+                           min_distance_to_merge,
+                           min_angle_to_merge,
+                           linesnumber,
+                           None,
+                           simulation_classification,
+                           None,
+                           measured_classification,
+                           percentagePS,
+                           percentagePM,
+                           percentagePMS,
                            LongtermES])
         print(f"Data successfully written to {filepath}.")
