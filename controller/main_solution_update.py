@@ -846,8 +846,18 @@ class Interface:
         props = dict(facecolor='blue', alpha=0.2)
         ax.set_xlabel(textstr,bbox=props,fontsize=20)
 
+        plt.subplot(121)
         imshow(img_merged_lines)
         plt.xticks([]), plt.yticks([])
+
+        plt.subplot(122)
+        gray()
+        plt.imshow(blur)
+        # indicates that each pixel is equal to 0.167 micrometer.
+        scalebar = ScaleBar(0.167, 'um')
+        plt.gca().add_artist(scalebar)
+        plt.xticks([]), plt.yticks([])
+
         plt.show()
 
 
